@@ -27,15 +27,26 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Hero Image */}
+          {/* Hero Video */}
           <div className="relative animate-slide-up">
             <div className="bg-gradient-to-br from-gold/20 to-navy/20 rounded-2xl p-6 lg:p-8">
-              <img
-                src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=400&fit=crop&fm=webp&q=80"
-                alt="Stylish eyewear collection"
+              <video
                 className="w-full h-80 lg:h-96 object-cover rounded-xl shadow-2xl"
-                loading="eager"
-              />
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=400&fit=crop&fm=webp&q=80"
+              >
+                <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
+                <source src="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4" type="video/mp4" />
+                {/* Fallback image if video doesn't load */}
+                <img
+                  src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=400&fit=crop&fm=webp&q=80"
+                  alt="Stylish eyewear collection"
+                  className="w-full h-80 lg:h-96 object-cover rounded-xl shadow-2xl"
+                />
+              </video>
             </div>
             {/* Floating Elements */}
             <div className="absolute -top-6 -right-6 w-20 h-20 lg:w-24 lg:h-24 bg-gold rounded-full opacity-20 animate-pulse"></div>
