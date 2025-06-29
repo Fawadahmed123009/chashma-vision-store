@@ -14,7 +14,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Left Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-8 flex-1">
             <Link 
               to="/shop" 
               className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/shop') ? 'text-navy font-medium' : 'text-gray-600'}`}
@@ -39,7 +39,7 @@ const Header = () => {
           </nav>
 
           {/* Centered Logo */}
-          <Link to="/" className="flex items-center space-x-3 absolute left-1/2 transform -translate-x-1/2 lg:relative lg:left-auto lg:transform-none">
+          <Link to="/" className="flex items-center space-x-3 mx-8">
             <div className="w-10 h-10 bg-navy rounded-full flex items-center justify-center shadow-lg">
               <span className="text-gold font-bold text-lg">C</span>
             </div>
@@ -47,7 +47,7 @@ const Header = () => {
           </Link>
 
           {/* Right Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-8 flex-1 justify-end">
             <Link 
               to="/sunglasses" 
               className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/sunglasses') ? 'text-navy font-medium' : 'text-gray-600'}`}
@@ -72,7 +72,7 @@ const Header = () => {
           </nav>
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-2 lg:space-x-4">
+          <div className="flex items-center space-x-2 lg:space-x-4 lg:ml-8">
             <button className="p-2 lg:p-3 hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105">
               <Search className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
             </button>
