@@ -12,19 +12,19 @@ interface Order {
   order_number: string;
   total_amount: number;
   payment_method: string;
-  status: string;
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   created_at: string;
   shipping_address: any;
   profiles: {
-    full_name: string;
+    full_name: string | null;
     email: string;
-  };
+  } | null;
   order_items: Array<{
     quantity: number;
     price: number;
     product: {
       name: string;
-    };
+    } | null;
   }>;
 }
 
@@ -63,7 +63,7 @@ const OrdersPanel = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      setOrders(data as Order[] || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -76,7 +76,7 @@ const OrdersPanel = () => {
     }
   };
 
-  const updateOrderStatus = async (orderId: string, newStatus: string) => {
+  const updateOrderStatus = async (orderId: string, newStatus: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled') => {
     try {
       const { error } = await supabase
         .from('orders')
@@ -139,7 +139,7 @@ const OrdersPanel = () => {
                 <div>
                   <CardTitle className="text-lg">Order #{order.order_number}</CardTitle>
                   <p className="text-sm text-gray-600">
-                    {order.profiles?.full_name} • {order.profiles?.email}
+                    {order.profiles?.full_name || 'N/A'} • {order.profiles?.email || 'N/A'}
                   </p>
                   <p className="text-sm text-gray-500">
                     {new Date(order.created_at).toLocaleString()}
@@ -160,7 +160,7 @@ const OrdersPanel = () => {
                   <div className="space-y-2">
                     {order.order_items?.map((item, index) => (
                       <div key={index} className="flex justify-between text-sm">
-                        <span>{item.product?.name} × {item.quantity}</span>
+                        <span>{item.product?.name || 'Unknown Product'} × {item.quantity}</span>
                         <span>PKR {(item.price * item.quantity).toLocaleString()}</span>
                       </div>
                     ))}
@@ -179,14 +179,14 @@ const OrdersPanel = () => {
               </div>
 
               <div className="flex items-center justify-between mt-6 pt-4 border-t">
-                <Badge className={statusColors[order.status as keyof typeof statusColors]}>
+                <Badge className={statusColors[order.status]}>
                   {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                 </Badge>
                 
                 <div className="flex items-center space-x-3">
                   <Select
                     value={order.status}
-                    onValueChange={(value) => updateOrderStatus(order.id, value)}
+                    onValueChange={(value) => updateOrderStatus(order.id, value as any)}
                   >
                     <SelectTrigger className="w-40">
                       <SelectValue />

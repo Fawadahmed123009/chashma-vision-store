@@ -9,9 +9,9 @@ import { useToast } from '@/hooks/use-toast';
 interface User {
   id: string;
   email: string;
-  full_name: string;
-  phone: string;
-  city: string;
+  full_name: string | null;
+  phone: string | null;
+  city: string | null;
   created_at: string;
   user_roles: Array<{
     role: string;
@@ -25,18 +25,27 @@ const UsersPanel = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user_roles (
-            role
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setUsers(data || []);
+      if (profilesError) throw profilesError;
+
+      // Fetch roles separately to avoid relation issues
+      const { data: roles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+
+      // Combine the data
+      const usersWithRoles = profiles?.map(profile => ({
+        ...profile,
+        user_roles: roles?.filter(role => role.user_id === profile.id).map(role => ({ role: role.role })) || []
+      })) || [];
+
+      setUsers(usersWithRoles);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({

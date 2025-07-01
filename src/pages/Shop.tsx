@@ -251,7 +251,7 @@ const Shop = () => {
                     id={product.id}
                     name={product.name}
                     price={product.price}
-                    originalPrice={product.original_price}
+                    originalPrice={product.original_price || undefined}
                     image={product.images[0]}
                     category={product.shape}
                     rating={5}
