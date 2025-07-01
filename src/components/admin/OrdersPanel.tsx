@@ -63,7 +63,15 @@ const OrdersPanel = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      
+      // Transform the data to match our interface
+      const transformedData = data?.map(order => ({
+        ...order,
+        profiles: order.profiles || null,
+        order_items: order.order_items || []
+      })) || [];
+      
+      setOrders(transformedData as Order[]);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
