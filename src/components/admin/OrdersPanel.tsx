@@ -48,7 +48,7 @@ const OrdersPanel = () => {
         .from('orders')
         .select(`
           *,
-          profiles!orders_user_id_fkey (
+          profiles (
             full_name,
             email
           ),
@@ -63,7 +63,7 @@ const OrdersPanel = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setOrders(data as Order[] || []);
+      setOrders(data || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -186,7 +186,7 @@ const OrdersPanel = () => {
                 <div className="flex items-center space-x-3">
                   <Select
                     value={order.status}
-                    onValueChange={(value) => updateOrderStatus(order.id, value as any)}
+                    onValueChange={(value: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled') => updateOrderStatus(order.id, value)}
                   >
                     <SelectTrigger className="w-40">
                       <SelectValue />
