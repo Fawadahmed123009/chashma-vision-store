@@ -15,10 +15,7 @@ interface Order {
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   created_at: string;
   shipping_address: any;
-  profiles: {
-    full_name: string | null;
-    email: string;
-  } | null;
+  user_id: string;
   order_items: Array<{
     quantity: number;
     price: number;
@@ -48,10 +45,6 @@ const OrdersPanel = () => {
         .from('orders')
         .select(`
           *,
-          profiles (
-            full_name,
-            email
-          ),
           order_items (
             quantity,
             price,
@@ -64,14 +57,7 @@ const OrdersPanel = () => {
 
       if (error) throw error;
       
-      // Transform the data to match our interface
-      const transformedData = data?.map(order => ({
-        ...order,
-        profiles: order.profiles || null,
-        order_items: order.order_items || []
-      })) || [];
-      
-      setOrders(transformedData as Order[]);
+      setOrders(data || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -147,7 +133,7 @@ const OrdersPanel = () => {
                 <div>
                   <CardTitle className="text-lg">Order #{order.order_number}</CardTitle>
                   <p className="text-sm text-gray-600">
-                    {order.profiles?.full_name || 'N/A'} • {order.profiles?.email || 'N/A'}
+                    User ID: {order.user_id}
                   </p>
                   <p className="text-sm text-gray-500">
                     {new Date(order.created_at).toLocaleString()}
