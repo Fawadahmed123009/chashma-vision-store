@@ -13,13 +13,32 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   const { isAdmin, isLoading } = useAdminData();
 
-  if (!user || isLoading) {
+  console.log('AdminDashboard - user:', user);
+  console.log('AdminDashboard - isAdmin:', isAdmin);
+  console.log('AdminDashboard - isLoading:', isLoading);
+
+  if (isLoading) {
     return (
       <div className="min-h-screen">
         <Header />
         <main className="py-12">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-2xl font-bold text-navy mb-4">Loading...</h1>
+            <p className="text-gray-600">Checking admin permissions...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="py-12">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-2xl font-bold text-navy mb-4">Please Sign In</h1>
+            <p className="text-gray-600">You need to be logged in to access the admin panel.</p>
           </div>
         </main>
       </div>
@@ -34,6 +53,7 @@ const AdminDashboard = () => {
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-2xl font-bold text-navy mb-4">Access Denied</h1>
             <p className="text-gray-600">You don't have permission to access this page.</p>
+            <p className="text-sm text-gray-500 mt-2">User ID: {user.id}</p>
           </div>
         </main>
       </div>

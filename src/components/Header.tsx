@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAdminData } from '@/hooks/useAdminData';
 import { useCart } from '@/hooks/useCart';
-import { ShoppingBag, User, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,6 +17,7 @@ import {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdminData();
   const { getTotalItems } = useCart();
 
   const handleSignOut = async () => {
@@ -92,6 +95,17 @@ const Header = () => {
                         Orders
                       </Link>
                     </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin" className="flex items-center text-blue-600">
+                            <Shield className="w-4 h-4 mr-2" />
+                            Admin Panel
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-red-600">
                       <LogOut className="w-4 h-4 mr-2" />
@@ -199,6 +213,16 @@ const Header = () => {
                       <ShoppingBag className="w-5 h-5 mr-2" />
                       Orders
                     </Link>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="flex items-center px-4 py-2 text-blue-600 hover:bg-blue-50 transition-colors"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Shield className="w-5 h-5 mr-2" />
+                        Admin Panel
+                      </Link>
+                    )}
                     <button
                       onClick={handleSignOut}
                       className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left transition-colors"
