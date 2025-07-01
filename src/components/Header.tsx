@@ -1,147 +1,224 @@
-
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/hooks/useCart';
+import { ShoppingBag, User, Menu, X, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
+  const { user, signOut } = useAuth();
+  const { getTotalItems } = useCart();
 
-  const isActive = (path: string) => location.pathname === path;
+  const handleSignOut = async () => {
+    await signOut();
+    setIsMenuOpen(false);
+  };
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm relative z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Left Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center space-x-8 flex-1">
-            <Link 
-              to="/shop" 
-              className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/shop') ? 'text-navy font-medium' : 'text-gray-600'}`}
-            >
-              Shop
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-            <Link 
-              to="/men" 
-              className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/men') ? 'text-navy font-medium' : 'text-gray-600'}`}
-            >
-              Men
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-            <Link 
-              to="/women" 
-              className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/women') ? 'text-navy font-medium' : 'text-gray-600'}`}
-            >
-              Women
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-          </nav>
-
-          {/* Centered Logo */}
-          <Link to="/" className="flex items-center space-x-3 mx-8">
-            <div className="w-10 h-10 bg-navy rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-gold font-bold text-lg">C</span>
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center">
+              <span className="text-gold font-bold text-sm">C</span>
             </div>
-            <span className="text-navy font-bold text-2xl tracking-tight">Chashma Co</span>
+            <span className="text-xl font-bold text-navy">Chashma Co</span>
           </Link>
 
-          {/* Right Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center space-x-8 flex-1 justify-end">
-            <Link 
-              to="/sunglasses" 
-              className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/sunglasses') ? 'text-navy font-medium' : 'text-gray-600'}`}
-            >
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link to="/" className="text-gray-700 hover:text-navy transition-colors">
+              Home
+            </Link>
+            <Link to="/shop" className="text-gray-700 hover:text-navy transition-colors">
+              Shop
+            </Link>
+            <Link to="/men" className="text-gray-700 hover:text-navy transition-colors">
+              Men
+            </Link>
+            <Link to="/women" className="text-gray-700 hover:text-navy transition-colors">
+              Women
+            </Link>
+            <Link to="/sunglasses" className="text-gray-700 hover:text-navy transition-colors">
               Sunglasses
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link 
-              to="/about" 
-              className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/about') ? 'text-navy font-medium' : 'text-gray-600'}`}
-            >
+            <Link to="/about" className="text-gray-700 hover:text-navy transition-colors">
               About
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link 
-              to="/contact" 
-              className={`relative text-lg transition-all duration-300 hover:text-navy group ${isActive('/contact') ? 'text-navy font-medium' : 'text-gray-600'}`}
-            >
+            <Link to="/contact" className="text-gray-700 hover:text-navy transition-colors">
               Contact
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </nav>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center space-x-2 lg:space-x-4 lg:ml-8">
-            <button className="p-2 lg:p-3 hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105">
-              <Search className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
-            </button>
-            <button className="p-2 lg:p-3 hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105">
-              <User className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
-            </button>
-            <Link to="/cart" className="p-2 lg:p-3 hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105 relative">
-              <ShoppingBag className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
-              <span className="absolute -top-1 -right-1 bg-gold text-navy text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-                0
-              </span>
-            </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-full transition-all duration-200"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            {user ? (
+              <>
+                <Link to="/cart" className="relative p-2 text-gray-700 hover:text-navy transition-colors">
+                  <ShoppingBag className="w-6 h-6" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-gold text-navy text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </Link>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                      <User className="w-5 h-5" />
+                      <span>Account</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex items-center">
+                        <User className="w-4 h-4 mr-2" />
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/orders" className="flex items-center">
+                        <ShoppingBag className="w-4 h-4 mr-2" />
+                        Orders
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-red-600">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button className="btn-primary">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 text-gray-700"
+          >
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-6 border-t animate-fade-in">
-            <nav className="flex flex-col space-y-6">
-              <Link 
-                to="/shop" 
-                className="text-gray-600 hover:text-navy transition-colors text-lg font-medium"
+          <div className="md:hidden py-4 border-t">
+            <nav className="space-y-2">
+              <Link
+                to="/"
+                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/shop"
+                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Shop
               </Link>
-              <Link 
-                to="/men" 
-                className="text-gray-600 hover:text-navy transition-colors text-lg font-medium"
+              <Link
+                to="/men"
+                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Men
               </Link>
-              <Link 
-                to="/women" 
-                className="text-gray-600 hover:text-navy transition-colors text-lg font-medium"
+              <Link
+                to="/women"
+                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Women
               </Link>
-              <Link 
-                to="/sunglasses" 
-                className="text-gray-600 hover:text-navy transition-colors text-lg font-medium"
+              <Link
+                to="/sunglasses"
+                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sunglasses
               </Link>
-              <Link 
-                to="/about" 
-                className="text-gray-600 hover:text-navy transition-colors text-lg font-medium"
+              <Link
+                to="/about"
+                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
-              <Link 
-                to="/contact" 
-                className="text-gray-600 hover:text-navy transition-colors text-lg font-medium"
+              <Link
+                to="/contact"
+                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
               </Link>
+              
+              {user ? (
+                <>
+                  <div className="border-t pt-2 mt-2">
+                    <Link
+                      to="/cart"
+                      className="flex items-center px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <ShoppingBag className="w-5 h-5 mr-2" />
+                      Cart ({getTotalItems()})
+                    </Link>
+                    <Link
+                      to="/profile"
+                      className="flex items-center px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User className="w-5 h-5 mr-2" />
+                      Profile
+                    </Link>
+                    <Link
+                      to="/orders"
+                      className="flex items-center px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <ShoppingBag className="w-5 h-5 mr-2" />
+                      Orders
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left transition-colors"
+                    >
+                      <LogOut className="w-5 h-5 mr-2" />
+                      Sign Out
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="border-t pt-2 mt-2">
+                  <Link
+                    to="/auth"
+                    className="block px-4 py-2 text-navy font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign In
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
         )}
