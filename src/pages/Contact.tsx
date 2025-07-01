@@ -1,222 +1,257 @@
 
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { supabase } from '@/integrations/supabase/client';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+
+const contactSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email'),
+  phone: z.string().optional(),
+  subject: z.string().min(5, 'Subject must be at least 5 characters'),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
+});
+
+type ContactForm = z.infer<typeof contactSchema>;
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<ContactForm>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: '',
+    },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission
+  const onSubmit = async (data: ContactForm) => {
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([data]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for contacting us. We'll get back to you soon.",
+      });
+
+      form.reset();
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const openWhatsApp = () => {
+    const phoneNumber = '923001234567'; // Replace with actual WhatsApp number
+    const message = 'Hello, I would like to inquire about your eyewear collection.';
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
   };
 
   return (
     <div className="min-h-screen">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-gray-50 to-white py-20">
+        {/* Page Header */}
+        <section className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
             <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-bold text-navy mb-6">
-                Get In Touch
+              <h1 className="text-4xl md:text-5xl font-bold text-navy mb-4">
+                Contact Us
               </h1>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Have questions about our frames? Need help with your prescription? 
-                We're here to help you find the perfect eyewear solution.
+                Get in touch with our team. We're here to help you find the perfect eyewear.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Contact Information & Form */}
+        {/* Contact Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Information */}
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-3xl font-bold text-navy mb-6">
-                    Visit Our Stores
-                  </h2>
-                  
-                  <div className="space-y-6">
-                    <div className="bg-white rounded-2xl p-6 shadow-md">
-                      <h3 className="text-xl font-semibold text-navy mb-3">Karachi Flagship Store</h3>
-                      <p className="text-gray-600 mb-2">Shahrah-e-Faisal, Block 6, PECHS</p>
-                      <p className="text-gray-600 mb-2">Karachi, Sindh 75400</p>
-                      <p className="text-gray-600 mb-2">Phone: +92 21 3456 7890</p>
-                      <p className="text-gray-600">Mon-Sat: 10AM-9PM | Sun: 2PM-8PM</p>
-                    </div>
+                  <h2 className="text-3xl font-bold text-navy mb-6">Get In Touch</h2>
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    Have questions about our products, need help with sizing, or want to discuss custom orders? 
+                    We're here to help! Reach out to us through any of the channels below.
+                  </p>
+                </div>
 
-                    <div className="bg-white rounded-2xl p-6 shadow-md">
-                      <h3 className="text-xl font-semibold text-navy mb-3">Lahore Store</h3>
-                      <p className="text-gray-600 mb-2">MM Alam Road, Gulberg III</p>
-                      <p className="text-gray-600 mb-2">Lahore, Punjab 54660</p>
-                      <p className="text-gray-600 mb-2">Phone: +92 42 3456 7890</p>
-                      <p className="text-gray-600">Mon-Sat: 11AM-10PM | Sun: 3PM-9PM</p>
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-navy rounded-lg flex items-center justify-center">
+                      <Phone className="w-6 h-6 text-gold" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-navy mb-1">Phone</h3>
+                      <p className="text-gray-600">+92 300 123 4567</p>
+                      <p className="text-sm text-gray-500">Mon-Sat: 9AM-8PM</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-navy rounded-lg flex items-center justify-center">
+                      <Mail className="w-6 h-6 text-gold" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-navy mb-1">Email</h3>
+                      <p className="text-gray-600">hello@chashmaco.com</p>
+                      <p className="text-sm text-gray-500">We'll respond within 24 hours</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-navy rounded-lg flex items-center justify-center">
+                      <MapPin className="w-6 h-6 text-gold" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-navy mb-1">Visit Our Store</h3>
+                      <p className="text-gray-600">123 Main Street, Gulberg</p>
+                      <p className="text-gray-600">Lahore, Punjab, Pakistan</p>
                     </div>
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-xl font-semibold text-navy mb-4">Quick Contact</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gold rounded-full flex items-center justify-center">
-                        <span className="text-navy font-bold">📞</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-navy">Customer Service</p>
-                        <p className="text-gray-600">+92 300 1234567</p>
-                      </div>
+                {/* WhatsApp Button */}
+                <div className="bg-green-50 rounded-lg p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                      <MessageCircle className="w-6 h-6 text-white" />
                     </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gold rounded-full flex items-center justify-center">
-                        <span className="text-navy font-bold">📧</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-navy">Email Support</p>
-                        <p className="text-gray-600">hello@chashmaco.pk</p>
-                      </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-navy mb-1">WhatsApp Support</h3>
+                      <p className="text-gray-600 text-sm">Get instant help via WhatsApp</p>
                     </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold">💬</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-navy">WhatsApp</p>
-                        <p className="text-gray-600">+92 300 1234567</p>
-                      </div>
-                    </div>
+                    <Button
+                      onClick={openWhatsApp}
+                      className="bg-green-500 hover:bg-green-600 text-white"
+                    >
+                      Chat Now
+                    </Button>
                   </div>
                 </div>
               </div>
 
               {/* Contact Form */}
-              <div className="bg-white rounded-2xl p-8 shadow-lg">
+              <div className="bg-white rounded-2xl shadow-lg p-8">
                 <h2 className="text-2xl font-bold text-navy mb-6">Send us a Message</h2>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
                         name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
-                        placeholder="Your full name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your full name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
+
+                      <FormField
+                        control={form.control}
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
-                        placeholder="your@email.com"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="your@email.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
-                        placeholder="+92 300 1234567"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Subject *
-                      </label>
-                      <select
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
-                      >
-                        <option value="">Select subject</option>
-                        <option value="product-inquiry">Product Inquiry</option>
-                        <option value="prescription-help">Prescription Help</option>
-                        <option value="order-status">Order Status</option>
-                        <option value="return-exchange">Return/Exchange</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                  </div>
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone (Optional)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Your phone number" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Message *
-                    </label>
-                    <textarea
+                    <FormField
+                      control={form.control}
+                      name="subject"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Subject *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="How can we help you?" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
                       name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      required
-                      rows={5}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
-                      placeholder="Tell us how we can help you..."
-                    ></textarea>
-                  </div>
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message *</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Tell us more about your inquiry..."
+                              className="min-h-[120px]"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <button type="submit" className="btn-primary w-full">
-                    Send Message
-                  </button>
-                </form>
+                    <Button
+                      type="submit"
+                      className="btn-primary w-full"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </Button>
+                  </form>
+                </Form>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Map Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-navy mb-4">Find Us</h2>
-              <p className="text-gray-600">Visit our stores for personalized fitting and consultation</p>
-            </div>
-            
-            <div className="bg-gray-300 h-96 rounded-2xl flex items-center justify-center">
-              <p className="text-gray-600">Interactive Map Coming Soon</p>
             </div>
           </div>
         </section>

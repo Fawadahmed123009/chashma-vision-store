@@ -1,165 +1,265 @@
 
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useCart } from '@/hooks/useCart';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { ShoppingBag, User, Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ShoppingBag, ArrowLeft } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  original_price?: number;
+  images: string[];
+  gender: string;
+  shape: string;
+  brand: string;
+  stock_quantity: number;
+  features: string[];
+  sku: string;
+}
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+  
+  const [product, setProduct] = useState<Product | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock product data - in real app, would fetch by ID
-  const product = {
-    id: 1,
-    name: 'Classic Aviator Frame',
-    price: 4500,
-    originalPrice: 6000,
-    images: [
-      'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=600&fit=crop'
-    ],
-    category: 'Sunglasses',
-    rating: 5,
-    reviews: 24,
-    description: 'Premium aviator-style frames crafted with high-quality materials. Perfect for both casual and professional settings. Features UV protection and scratch-resistant lenses.',
-    features: [
-      'UV 400 Protection',
-      'Scratch-resistant coating',
-      'Lightweight titanium frame',
-      'Adjustable nose pads',
-      'Premium hinges',
-      '2-year warranty'
-    ],
-    inStock: true
+  const fetchProduct = async () => {
+    if (!id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
+
+      if (error) throw error;
+      setProduct(data);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      toast({
+        title: "Error",
+        description: "Product not found.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchProduct();
+  }, [id]);
+
+  const handleAddToCart = async () => {
+    if (!product) return;
+    
+    try {
+      await addToCart(product.id, quantity);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="py-12">
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-xl text-gray-600">Loading...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="py-12">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-2xl font-bold text-navy mb-4">Product Not Found</h1>
+            <Button onClick={() => navigate('/shop')} className="btn-primary">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Shop
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const inStock = product.stock_quantity > 0;
+  const isLowStock = product.stock_quantity <= 5;
 
   return (
     <div className="min-h-screen">
       <Header />
       <main className="py-12">
         <div className="container mx-auto px-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/shop')}
+            className="mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Shop
+          </Button>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Images */}
             <div className="space-y-4">
               <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden">
                 <img
-                  src={product.images[selectedImage]}
+                  src={product.images[selectedImage] || product.images[0]}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                {product.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index ? 'border-navy' : 'border-gray-200'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${product.name} view ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+              {product.images.length > 1 && (
+                <div className="grid grid-cols-4 gap-4">
+                  {product.images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`aspect-square rounded-lg overflow-hidden border-2 ${
+                        selectedImage === index ? 'border-navy' : 'border-gray-200'
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`${product.name} view ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
             <div className="space-y-6">
               <div>
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-sm text-gray-500 uppercase tracking-wide">{product.category}</span>
-                  {product.inStock && (
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                      In Stock
-                    </span>
+                  <Badge variant="secondary">{product.shape}</Badge>
+                  <Badge variant="secondary">{product.gender}</Badge>
+                  {inStock ? (
+                    isLowStock ? (
+                      <Badge variant="destructive">Low Stock</Badge>
+                    ) : (
+                      <Badge className="bg-green-100 text-green-800">In Stock</Badge>
+                    )
+                  ) : (
+                    <Badge variant="destructive">Out of Stock</Badge>
                   )}
                 </div>
+                
                 <h1 className="text-3xl md:text-4xl font-bold text-navy mb-4">
                   {product.name}
                 </h1>
                 
-                <div className="flex items-center mb-4">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className={`text-lg ${i < product.rating ? 'text-gold' : 'text-gray-300'}`}>
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                  <span className="text-gray-600 ml-2">({product.reviews} reviews)</span>
-                </div>
+                <p className="text-sm text-gray-500 mb-4">
+                  Brand: {product.brand} • SKU: {product.sku}
+                </p>
 
                 <div className="flex items-center space-x-4 mb-6">
-                  <span className="text-3xl font-bold text-navy">PKR {product.price.toLocaleString()}</span>
-                  {product.originalPrice && (
-                    <span className="text-xl text-gray-500 line-through">PKR {product.originalPrice.toLocaleString()}</span>
-                  )}
-                  {product.originalPrice && (
-                    <span className="bg-gold text-navy px-3 py-1 rounded-full text-sm font-medium">
-                      Save PKR {(product.originalPrice - product.price).toLocaleString()}
-                    </span>
+                  <span className="text-3xl font-bold text-navy">
+                    PKR {product.price.toLocaleString()}
+                  </span>
+                  {product.original_price && (
+                    <>
+                      <span className="text-xl text-gray-500 line-through">
+                        PKR {product.original_price.toLocaleString()}
+                      </span>
+                      <Badge className="bg-gold text-navy">
+                        Save PKR {(product.original_price - product.price).toLocaleString()}
+                      </Badge>
+                    </>
                   )}
                 </div>
               </div>
 
-              <p className="text-gray-700 leading-relaxed">
-                {product.description}
-              </p>
+              {product.description && (
+                <div>
+                  <h3 className="font-semibold text-navy mb-2">Description</h3>
+                  <p className="text-gray-700 leading-relaxed">{product.description}</p>
+                </div>
+              )}
 
-              {/* Features */}
-              <div>
-                <h3 className="font-semibold text-navy mb-3">Features:</h3>
-                <ul className="grid grid-cols-2 gap-2">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="text-sm text-gray-600 flex items-center">
-                      <span className="w-2 h-2 bg-gold rounded-full mr-2"></span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {product.features && product.features.length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-navy mb-3">Features</h3>
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {product.features.map((feature, index) => (
+                      <li key={index} className="text-sm text-gray-600 flex items-center">
+                        <span className="w-2 h-2 bg-gold rounded-full mr-2"></span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Actions */}
               <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <label className="text-sm font-medium text-gray-700">Quantity:</label>
-                  <select
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="border border-gray-300 rounded-lg px-3 py-2"
-                  >
-                    {[1, 2, 3, 4, 5].map(num => (
-                      <option key={num} value={num}>{num}</option>
-                    ))}
-                  </select>
-                </div>
+                {inStock && (
+                  <div className="flex items-center space-x-4">
+                    <label className="text-sm font-medium text-gray-700">Quantity:</label>
+                    <Select
+                      value={quantity.toString()}
+                      onValueChange={(value) => setQuantity(Number(value))}
+                    >
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[...Array(Math.min(product.stock_quantity, 10))].map((_, i) => (
+                          <SelectItem key={i + 1} value={(i + 1).toString()}>
+                            {i + 1}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-sm text-gray-500">
+                      {product.stock_quantity} available
+                    </span>
+                  </div>
+                )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <button className="btn-primary flex items-center justify-center space-x-2">
+                <div className="grid grid-cols-1 gap-4">
+                  <Button
+                    onClick={handleAddToCart}
+                    disabled={!inStock}
+                    className="btn-primary flex items-center justify-center space-x-2"
+                  >
                     <ShoppingBag className="w-5 h-5" />
-                    <span>Add to Cart</span>
-                  </button>
-                  <button className="btn-secondary flex items-center justify-center space-x-2">
-                    <User className="w-5 h-5" />
-                    <span>Try Virtual</span>
-                  </button>
-                  <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center space-x-2">
-                    <Upload className="w-5 h-5" />
-                    <span>Upload Prescription</span>
-                  </button>
+                    <span>{inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+                  </Button>
                 </div>
               </div>
 
               {/* Payment Options */}
               <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-semibold text-navy mb-3">Payment Options:</h3>
+                <h3 className="font-semibold text-navy mb-3">Payment Options</h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="flex items-center">
                     <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
@@ -175,7 +275,7 @@ const ProductDetail = () => {
                   </div>
                   <div className="flex items-center">
                     <span className="w-2 h-2 bg-gold rounded-full mr-2"></span>
-                    Credit/Debit Card
+                    Manual Confirmation
                   </div>
                 </div>
               </div>
