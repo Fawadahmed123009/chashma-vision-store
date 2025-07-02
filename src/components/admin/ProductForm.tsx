@@ -20,8 +20,8 @@ const productSchema = z.object({
   stock_quantity: z.number().min(0, 'Stock quantity must be positive'),
   gender: z.enum(['men', 'women', 'unisex']),
   shape: z.enum(['aviator', 'round', 'square', 'cat-eye', 'rectangle', 'wayfarer']),
-  features: z.string().optional(),
-  images: z.string().optional(),
+  features: z.array(z.string()).optional(),
+  images: z.array(z.string()).optional(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -69,18 +69,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       stock_quantity: product?.stock_quantity || 0,
       gender: (product?.gender as any) || 'unisex',
       shape: (product?.shape as any) || 'round',
-      features: product?.features?.join(', ') || '',
-      images: product?.images?.join(', ') || '',
+      features: product?.features || [],
+      images: product?.images || [],
     },
   });
 
   const handleSubmit = async (data: ProductFormData) => {
-    const formattedData = {
-      ...data,
-      features: data.features ? data.features.split(',').map(f => f.trim()) : [],
-      images: data.images ? data.images.split(',').map(f => f.trim()) : [],
-    };
-    await onSubmit(formattedData);
+    await onSubmit(data);
     onClose();
   };
 
@@ -272,7 +267,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <FormControl>
                     <Input 
                       placeholder="UV Protection, Lightweight, Durable" 
-                      {...field} 
+                      value={field.value?.join(', ') || ''}
+                      onChange={(e) => {
+                        const features = e.target.value.split(',').map(f => f.trim()).filter(f => f);
+                        field.onChange(features);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -290,7 +289,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <Textarea 
                       placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg" 
                       className="resize-none"
-                      {...field} 
+                      value={field.value?.join(', ') || ''}
+                      onChange={(e) => {
+                        const images = e.target.value.split(',').map(f => f.trim()).filter(f => f);
+                        field.onChange(images);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

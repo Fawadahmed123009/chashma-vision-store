@@ -8,11 +8,9 @@ import { useToast } from '@/hooks/use-toast';
 
 interface User {
   id: string;
-  email: string;
+  email: string | null;
   full_name: string | null;
-  phone: string | null;
-  city: string | null;
-  created_at: string;
+  role: string | null;
   user_roles: Array<{
     role: string;
   }>;
@@ -28,7 +26,7 @@ const UsersPanel = () => {
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('id');
 
       if (profilesError) throw profilesError;
 
@@ -105,9 +103,7 @@ const UsersPanel = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="text-sm">
-                <p><span className="text-gray-500">Phone:</span> {user.phone || 'Not provided'}</p>
-                <p><span className="text-gray-500">City:</span> {user.city || 'Not provided'}</p>
-                <p><span className="text-gray-500">Joined:</span> {new Date(user.created_at).toLocaleDateString()}</p>
+                <p><span className="text-gray-500">User ID:</span> {user.id}</p>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -116,6 +112,9 @@ const UsersPanel = () => {
                     {role.role}
                   </Badge>
                 ))}
+                {(!user.user_roles || user.user_roles.length === 0) && (
+                  <Badge variant="outline">No roles assigned</Badge>
+                )}
               </div>
 
               {!user.user_roles?.some(role => role.role === 'admin') && (
