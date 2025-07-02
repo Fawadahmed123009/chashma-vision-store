@@ -10,19 +10,16 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 const checkoutSchema = z.object({
   full_name: z.string().min(2, 'Full name is required'),
   phone: z.string().min(10, 'Valid phone number is required'),
-  address: z.string().min(5, 'Address is required'),
-  city: z.string().min(2, 'City is required'),
-  postal_code: z.string().min(3, 'Postal code is required'),
-  payment_method: z.enum(['cod', 'jazzcash', 'easypaisa']),
+  address: z.string().min(5, 'Shipping address is required'),
+  notes: z.string().optional(),
 });
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
@@ -40,14 +37,12 @@ const Checkout = () => {
       full_name: '',
       phone: '',
       address: '',
-      city: '',
-      postal_code: '',
-      payment_method: 'cod',
+      notes: '',
     },
   });
 
   const subtotal = getTotalPrice();
-  const shipping = 200;
+  const shipping = 200; // Fixed shipping cost
   const total = subtotal + shipping;
 
   const onSubmit = async (data: CheckoutForm) => {
@@ -83,14 +78,13 @@ const Checkout = () => {
           order_number: orderNumber,
           total_amount: total,
           shipping_cost: shipping,
-          payment_method: data.payment_method,
+          payment_method: 'cod',
           shipping_address: {
             full_name: data.full_name,
             phone: data.phone,
-            street: data.address,
-            city: data.city,
-            postal_code: data.postal_code,
+            address: data.address,
           },
+          notes: data.notes || null,
           status: 'pending',
         })
         .select()
@@ -117,10 +111,10 @@ const Checkout = () => {
 
       toast({
         title: "Order Placed Successfully!",
-        description: `Your order #${orderNumber} has been placed.`,
+        description: `Your order #${orderNumber} has been placed. Expected delivery: 3-5 business days.`,
       });
 
-      navigate('/orders');
+      navigate('/account/orders');
     } catch (error: any) {
       console.error('Checkout error:', error);
       toast({
@@ -213,75 +207,43 @@ const Checkout = () => {
                     name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address</FormLabel>
+                        <FormLabel>Shipping Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="Your street address" {...field} />
+                          <Textarea 
+                            placeholder="Your complete shipping address"
+                            className="min-h-[100px]"
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>City</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your city" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="postal_code"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Postal Code</FormLabel>
-                          <FormControl>
-                            <Input placeholder="12345" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
 
                   <FormField
                     control={form.control}
-                    name="payment_method"
+                    name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Payment Method</FormLabel>
+                        <FormLabel>Order Notes (Optional)</FormLabel>
                         <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="space-y-3"
-                          >
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="cod" id="cod" />
-                              <Label htmlFor="cod">Cash on Delivery</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="jazzcash" id="jazzcash" />
-                              <Label htmlFor="jazzcash">JazzCash (Manual Confirmation)</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="easypaisa" id="easypaisa" />
-                              <Label htmlFor="easypaisa">EasyPaisa (Manual Confirmation)</Label>
-                            </div>
-                          </RadioGroup>
+                          <Textarea 
+                            placeholder="Any special instructions for your order"
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-navy mb-2">Payment Method</h3>
+                    <p className="text-gray-600">Cash on Delivery (COD)</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Pay when your order is delivered to your doorstep.
+                    </p>
+                  </div>
 
                   <Button
                     type="submit"
@@ -329,6 +291,15 @@ const Checkout = () => {
                     <span className="text-lg font-semibold text-navy">Total</span>
                     <span className="text-lg font-bold text-navy">PKR {total.toLocaleString()}</span>
                   </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg mt-4">
+                  <p className="text-sm text-green-700">
+                    <strong>Estimated Delivery:</strong> 3-5 business days
+                  </p>
+                  <p className="text-sm text-green-600 mt-1">
+                    Free shipping on all orders above PKR 5,000
+                  </p>
                 </div>
               </div>
             </div>
