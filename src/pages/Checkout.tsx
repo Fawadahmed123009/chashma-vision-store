@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -20,9 +21,48 @@ const checkoutSchema = z.object({
   phone: z.string().min(10, 'Valid phone number is required'),
   address: z.string().min(5, 'Shipping address is required'),
   notes: z.string().optional(),
+  payment_method: z.enum(['cod', 'easypaisa', 'jazzcash', 'bank_transfer']),
+  payment_reference: z.string().optional(),
+}).refine((data) => {
+  if (data.payment_method !== 'cod' && !data.payment_reference) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Transaction ID is required for online payment methods",
+  path: ["payment_reference"],
 });
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
+
+const paymentMethods = [
+  { value: 'cod', label: 'Cash on Delivery', description: 'Pay when your order is delivered' },
+  { value: 'easypaisa', label: 'EasyPaisa', description: 'Mobile wallet payment' },
+  { value: 'jazzcash', label: 'JazzCash', description: 'Mobile wallet payment' },
+  { value: 'bank_transfer', label: 'Bank Transfer', description: 'Direct bank transfer' },
+];
+
+const paymentDetails = {
+  easypaisa: {
+    title: 'EasyPaisa Payment Details',
+    account: '03XX-XXXXXXX',
+    name: 'Chashma Co',
+    instructions: 'Send payment to the above number and enter the transaction ID below.'
+  },
+  jazzcash: {
+    title: 'JazzCash Payment Details',
+    account: '03XX-XXXXXXX',
+    name: 'Chashma Co',
+    instructions: 'Send payment to the above number and enter the transaction ID below.'
+  },
+  bank_transfer: {
+    title: 'Bank Transfer Details',
+    account: 'XXXX-XXXX-XXXX-XXXX',
+    name: 'Chashma Co',
+    bank: 'HBL Bank',
+    instructions: 'Transfer amount to the above account and enter the transaction reference below.'
+  }
+};
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -38,11 +78,14 @@ const Checkout = () => {
       phone: '',
       address: '',
       notes: '',
+      payment_method: 'cod',
+      payment_reference: '',
     },
   });
 
+  const selectedPaymentMethod = form.watch('payment_method');
   const subtotal = getTotalPrice();
-  const shipping = 200; // Fixed shipping cost
+  const shipping = 200;
   const total = subtotal + shipping;
 
   const onSubmit = async (data: CheckoutForm) => {
@@ -78,7 +121,9 @@ const Checkout = () => {
           order_number: orderNumber,
           total_amount: total,
           shipping_cost: shipping,
-          payment_method: 'cod',
+          payment_method: data.payment_method,
+          payment_reference: data.payment_reference || null,
+          payment_status: data.payment_method === 'cod' ? 'confirmed' : 'pending',
           shipping_address: {
             full_name: data.full_name,
             phone: data.phone,
@@ -109,9 +154,13 @@ const Checkout = () => {
       // Clear cart
       await clearCart();
 
+      const paymentStatusMsg = data.payment_method === 'cod' 
+        ? 'Payment: Cash on Delivery' 
+        : 'Payment verification pending';
+
       toast({
         title: "Order Placed Successfully!",
-        description: `Your order #${orderNumber} has been placed. Expected delivery: 3-5 business days.`,
+        description: `Your order #${orderNumber} has been placed. ${paymentStatusMsg}. Expected delivery: 3-5 business days.`,
       });
 
       navigate('/account/orders');
@@ -170,79 +219,144 @@ const Checkout = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Checkout Form */}
             <div>
-              <h2 className="text-xl font-semibold text-navy mb-6">Shipping Information</h2>
-              
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="full_name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Your full name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div>
+                    <h2 className="text-xl font-semibold text-navy mb-6">Shipping Information</h2>
+                    
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="full_name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your full name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Your phone number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone Number</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your phone number" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Shipping Address</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Your complete shipping address"
-                            className="min-h-[100px]"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Shipping Address</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder="Your complete shipping address"
+                                className="min-h-[100px]"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormField
-                    control={form.control}
-                    name="notes"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Order Notes (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Any special instructions for your order"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      <FormField
+                        control={form.control}
+                        name="notes"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Order Notes (Optional)</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder="Any special instructions for your order"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
 
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-navy mb-2">Payment Method</h3>
-                    <p className="text-gray-600">Cash on Delivery (COD)</p>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Pay when your order is delivered to your doorstep.
-                    </p>
+                  <div>
+                    <h2 className="text-xl font-semibold text-navy mb-6">Payment Method</h2>
+                    
+                    <FormField
+                      control={form.control}
+                      name="payment_method"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="space-y-3"
+                            >
+                              {paymentMethods.map((method) => (
+                                <div key={method.value} className="flex items-center space-x-3 p-3 border rounded-lg">
+                                  <RadioGroupItem value={method.value} id={method.value} />
+                                  <div className="flex-1">
+                                    <label htmlFor={method.value} className="font-medium cursor-pointer">
+                                      {method.label}
+                                    </label>
+                                    <p className="text-sm text-gray-600">{method.description}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {selectedPaymentMethod !== 'cod' && (
+                      <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h3 className="font-semibold text-navy mb-3">
+                          {paymentDetails[selectedPaymentMethod as keyof typeof paymentDetails].title}
+                        </h3>
+                        <div className="space-y-2 text-sm">
+                          <p><strong>Account:</strong> {paymentDetails[selectedPaymentMethod as keyof typeof paymentDetails].account}</p>
+                          <p><strong>Account Title:</strong> {paymentDetails[selectedPaymentMethod as keyof typeof paymentDetails].name}</p>
+                          {'bank' in paymentDetails[selectedPaymentMethod as keyof typeof paymentDetails] && (
+                            <p><strong>Bank:</strong> {(paymentDetails[selectedPaymentMethod as keyof typeof paymentDetails] as any).bank}</p>
+                          )}
+                          <p><strong>Amount:</strong> PKR {total.toLocaleString()}</p>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-3">
+                          {paymentDetails[selectedPaymentMethod as keyof typeof paymentDetails].instructions}
+                        </p>
+
+                        <FormField
+                          control={form.control}
+                          name="payment_reference"
+                          render={({ field }) => (
+                            <FormItem className="mt-4">
+                              <FormLabel>Transaction ID / Reference Number</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Enter your transaction ID" 
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <Button

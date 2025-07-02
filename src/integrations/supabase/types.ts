@@ -126,6 +126,8 @@ export type Database = {
           notes: string | null
           order_number: string
           payment_method: string
+          payment_reference: string | null
+          payment_status: string | null
           shipping_address: Json
           shipping_cost: number | null
           status: Database["public"]["Enums"]["order_status"] | null
@@ -139,6 +141,8 @@ export type Database = {
           notes?: string | null
           order_number: string
           payment_method: string
+          payment_reference?: string | null
+          payment_status?: string | null
           shipping_address: Json
           shipping_cost?: number | null
           status?: Database["public"]["Enums"]["order_status"] | null
@@ -152,6 +156,8 @@ export type Database = {
           notes?: string | null
           order_number?: string
           payment_method?: string
+          payment_reference?: string | null
+          payment_status?: string | null
           shipping_address?: Json
           shipping_cost?: number | null
           status?: Database["public"]["Enums"]["order_status"] | null
@@ -300,7 +306,9 @@ export type Database = {
         Returns: string
       }
       has_role: {
-        Args: { _user_id: string; _role: string }
+        Args:
+          | { _user_id: string; _role: Database["public"]["Enums"]["app_role"] }
+          | { _user_id: string; _role: string }
         Returns: boolean
       }
     }
