@@ -217,37 +217,22 @@ export type Database = {
       }
       profiles: {
         Row: {
-          address: string | null
-          city: string | null
-          created_at: string | null
-          email: string
+          email: string | null
           full_name: string | null
           id: string
-          phone: string | null
-          postal_code: string | null
-          updated_at: string | null
+          role: string | null
         }
         Insert: {
-          address?: string | null
-          city?: string | null
-          created_at?: string | null
-          email: string
+          email?: string | null
           full_name?: string | null
           id: string
-          phone?: string | null
-          postal_code?: string | null
-          updated_at?: string | null
+          role?: string | null
         }
         Update: {
-          address?: string | null
-          city?: string | null
-          created_at?: string | null
-          email?: string
+          email?: string | null
           full_name?: string | null
           id?: string
-          phone?: string | null
-          postal_code?: string | null
-          updated_at?: string | null
+          role?: string | null
         }
         Relationships: []
       }
@@ -315,10 +300,7 @@ export type Database = {
         Returns: string
       }
       has_role: {
-        Args: {
-          _user_id: string
-          _role: Database["public"]["Enums"]["app_role"]
-        }
+        Args: { _user_id: string; _role: string }
         Returns: boolean
       }
     }
