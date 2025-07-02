@@ -1,7 +1,10 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, User } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/CartContext';
 
 interface Product {
   id: string;
@@ -12,9 +15,7 @@ interface Product {
   brand: string;
   gender: string;
   shape: string;
-  sku: string;
   stock_quantity: number;
-  is_active: boolean;
 }
 
 interface ProductCardProps {
@@ -22,68 +23,82 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const mainImage = product.images && product.images.length > 0 ? product.images[0] : '/placeholder.svg';
-  
+  const { addToCart } = useCart();
+  const inStock = product.stock_quantity > 0;
+  const onSale = product.original_price && product.original_price > product.price;
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (inStock) {
+      await addToCart(product.id);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-md card-hover group">
-      <div className="relative overflow-hidden">
-        <img
-          src={mainImage}
-          alt={product.name}
-          className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        <div className="absolute top-4 right-4 space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-md hover:bg-white transition-colors">
-            <User className="w-4 h-4 text-navy" />
-          </button>
-          <button className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-md hover:bg-white transition-colors">
-            <ShoppingBag className="w-4 h-4 text-navy" />
-          </button>
+    <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
+      <Link to={`/product/${product.id}`}>
+        <div className="aspect-square bg-gray-100 overflow-hidden">
+          <img
+            src={product.images[0] || '/placeholder.svg'}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
         </div>
-        {product.original_price && product.original_price > product.price && (
-          <div className="absolute top-4 left-4 bg-gold text-navy px-3 py-1 rounded-full text-sm font-medium">
-            Save PKR {(product.original_price - product.price).toLocaleString()}
-          </div>
-        )}
-      </div>
+      </Link>
       
-      <div className="p-6">
-        <div className="mb-2">
-          <span className="text-sm text-gray-500 uppercase tracking-wide">{product.brand}</span>
-        </div>
-        <h3 className="font-semibold text-navy mb-3 group-hover:text-gold transition-colors">
-          <Link to={`/product/${product.id}`}>
-            {product.name}
-          </Link>
-        </h3>
-        
-        <div className="flex items-center mb-3">
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <span key={i} className={`text-sm ${i < 4 ? 'text-gold' : 'text-gray-300'}`}>
-                ★
-              </span>
-            ))}
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex-1">
+            <Link to={`/product/${product.id}`}>
+              <h3 className="font-semibold text-navy hover:text-navy/80 transition-colors">
+                {product.name}
+              </h3>
+            </Link>
+            <p className="text-sm text-gray-600">{product.brand}</p>
           </div>
-          <span className="text-sm text-gray-500 ml-2">(0)</span>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-navy">PKR {product.price.toLocaleString()}</span>
-            {product.original_price && product.original_price > product.price && (
-              <span className="text-sm text-gray-500 line-through">PKR {product.original_price.toLocaleString()}</span>
+          <div className="flex flex-wrap gap-1">
+            {onSale && (
+              <Badge variant="destructive" className="text-xs">
+                Sale
+              </Badge>
+            )}
+            {!inStock && (
+              <Badge variant="outline" className="text-xs">
+                Out of Stock
+              </Badge>
             )}
           </div>
-          <Link
-            to={`/product/${product.id}`}
-            className="bg-navy text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy/90 transition-colors"
-          >
-            View Details
-          </Link>
         </div>
-      </div>
-    </div>
+
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center space-x-2">
+            <span className="font-bold text-navy">
+              PKR {product.price.toLocaleString()}
+            </span>
+            {onSale && (
+              <span className="text-sm text-gray-500 line-through">
+                PKR {product.original_price?.toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex space-x-2">
+          <Link to={`/product/${product.id}`} className="flex-1">
+            <Button variant="outline" className="w-full">
+              View Details
+            </Button>
+          </Link>
+          <Button 
+            onClick={handleAddToCart}
+            disabled={!inStock}
+            className="flex-1 btn-primary"
+          >
+            {inStock ? 'Add to Cart' : 'Out of Stock'}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
