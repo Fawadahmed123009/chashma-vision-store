@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -110,6 +109,21 @@ const Checkout = () => {
     setIsSubmitting(true);
 
     try {
+      // Check stock availability before proceeding
+      for (const item of cartItems) {
+        const { data: product, error } = await supabase
+          .from('products')
+          .select('stock_quantity')
+          .eq('id', item.product_id)
+          .single();
+
+        if (error) throw error;
+
+        if (product.stock_quantity < item.quantity) {
+          throw new Error(`Insufficient stock for ${item.product.name}. Only ${product.stock_quantity} available.`);
+        }
+      }
+
       // Generate order number
       const { data: orderNumber } = await supabase.rpc('generate_order_number');
 
@@ -137,7 +151,7 @@ const Checkout = () => {
 
       if (orderError) throw orderError;
 
-      // Create order items
+      // Create order items and update stock
       const orderItems = cartItems.map(item => ({
         order_id: order.id,
         product_id: item.product_id,
@@ -150,6 +164,18 @@ const Checkout = () => {
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
+
+      // Update stock quantities
+      for (const item of cartItems) {
+        const { error: stockError } = await supabase
+          .from('products')
+          .update({
+            stock_quantity: item.product.stock_quantity - item.quantity
+          })
+          .eq('id', item.product_id);
+
+        if (stockError) throw stockError;
+      }
 
       // Clear cart
       await clearCart();
@@ -168,7 +194,7 @@ const Checkout = () => {
       console.error('Checkout error:', error);
       toast({
         title: "Order Failed",
-        description: "Failed to place order. Please try again.",
+        description: error.message || "Failed to place order. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -385,6 +411,9 @@ const Checkout = () => {
                     <div className="flex-1">
                       <h3 className="font-medium text-navy">{item.product.name}</h3>
                       <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                      <p className="text-xs text-gray-500">
+                        Stock: {item.product.stock_quantity - item.quantity} remaining
+                      </p>
                     </div>
                     <p className="font-semibold text-navy">
                       PKR {(item.product.price * item.quantity).toLocaleString()}

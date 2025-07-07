@@ -25,6 +25,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
   const inStock = product.stock_quantity > 0;
+  const lowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
   const onSale = product.original_price && product.original_price > product.price;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
@@ -37,12 +38,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
       <Link to={`/product/${product.id}`}>
-        <div className="aspect-square bg-gray-100 overflow-hidden">
+        <div className="aspect-square bg-gray-100 overflow-hidden relative">
           <img
             src={product.images[0] || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
+          {!inStock && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <span className="text-white font-semibold text-lg">Out of Stock</span>
+            </div>
+          )}
         </div>
       </Link>
       
@@ -67,6 +73,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 Out of Stock
               </Badge>
             )}
+            {lowStock && inStock && (
+              <Badge variant="secondary" className="text-xs">
+                Low Stock
+              </Badge>
+            )}
           </div>
         </div>
 
@@ -81,6 +92,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </span>
             )}
           </div>
+        </div>
+
+        <div className="mb-3">
+          <p className="text-xs text-gray-500">
+            {inStock ? `${product.stock_quantity} in stock` : 'Out of stock'}
+          </p>
         </div>
 
         <div className="flex space-x-2">

@@ -9,6 +9,7 @@ import ProductsTable from '@/components/admin/ProductsTable';
 import OrdersPanel from '@/components/admin/OrdersPanel';
 import UsersPanel from '@/components/admin/UsersPanel';
 import ContactPanel from '@/components/admin/ContactPanel';
+import AnalyticsPanel from '@/components/admin/AnalyticsPanel';
 import { Button } from '@/components/ui/button';
 import { Grid, Table as TableIcon } from 'lucide-react';
 
@@ -71,13 +72,18 @@ const AdminDashboard = () => {
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold text-navy mb-8">Admin Dashboard</h1>
           
-          <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+          <Tabs defaultValue="analytics" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="contact">Messages</TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="analytics">
+              <AnalyticsPanel />
+            </TabsContent>
             
             <TabsContent value="products" className="space-y-6">
               <div className="flex justify-between items-center">

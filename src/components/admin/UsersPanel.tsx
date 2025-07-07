@@ -2,18 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 
 interface User {
   id: string;
   email: string | null;
   full_name: string | null;
-  created_at: string | null;
+  role: string | null;
+  created_at?: string;
   user_roles: Array<{
-    role: string;
+    role: 'admin' | 'customer';
   }>;
 }
 
@@ -24,27 +24,19 @@ const UsersPanel = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data: profiles, error: profilesError } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select(`
+          *,
+          user_roles (
+            role
+          )
+        `)
+        .order('email');
 
-      if (profilesError) throw profilesError;
-
-      // Fetch roles separately to avoid relation issues
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
-
-      if (rolesError) throw rolesError;
-
-      // Combine the data
-      const usersWithRoles = profiles?.map(profile => ({
-        ...profile,
-        user_roles: roles?.filter(role => role.user_id === profile.id).map(role => ({ role: role.role })) || []
-      })) || [];
-
-      setUsers(usersWithRoles);
+      if (error) throw error;
+      
+      setUsers(data || []);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -59,7 +51,7 @@ const UsersPanel = () => {
 
   const updateUserRole = async (userId: string, newRole: 'admin' | 'customer') => {
     try {
-      // First, remove existing roles for this user
+      // First, delete existing role
       const { error: deleteError } = await supabase
         .from('user_roles')
         .delete()
@@ -67,20 +59,20 @@ const UsersPanel = () => {
 
       if (deleteError) throw deleteError;
 
-      // Then add the new role
+      // Then insert new role
       const { error: insertError } = await supabase
         .from('user_roles')
         .insert({
           user_id: userId,
-          role: newRole
+          role: newRole,
         });
 
       if (insertError) throw insertError;
-      
+
       await fetchUsers();
       toast({
         title: "Success",
-        description: `User role updated to ${newRole} successfully.`,
+        description: `User role updated to ${newRole}.`,
       });
     } catch (error) {
       console.error('Error updating user role:', error);
@@ -90,14 +82,6 @@ const UsersPanel = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const promoteToAdmin = async (userId: string) => {
-    await updateUserRole(userId, 'admin');
-  };
-
-  const demoteToCustomer = async (userId: string) => {
-    await updateUserRole(userId, 'customer');
   };
 
   useEffect(() => {
@@ -112,70 +96,41 @@ const UsersPanel = () => {
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold text-navy">Users Management</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map((user) => (
-          <Card key={user.id}>
-            <CardHeader>
-              <CardTitle className="text-lg">{user.full_name || 'No Name'}</CardTitle>
-              <p className="text-sm text-gray-600">{user.email}</p>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="text-sm">
-                <p><span className="text-gray-500">User ID:</span> {user.id}</p>
-                <p><span className="text-gray-500">Joined:</span> {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}</p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {user.user_roles?.map((role, index) => (
-                  <Badge key={index} variant={role.role === 'admin' ? 'default' : 'secondary'}>
-                    {role.role}
-                  </Badge>
-                ))}
-                {(!user.user_roles || user.user_roles.length === 0) && (
-                  <Badge variant="outline">No roles assigned</Badge>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Select
-                  value={user.user_roles?.[0]?.role || 'customer'}
-                  onValueChange={(value: 'admin' | 'customer') => updateUserRole(user.id, value)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="customer">Customer</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <div className="flex gap-2">
-                  {!user.user_roles?.some(role => role.role === 'admin') && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => promoteToAdmin(user.id)}
-                      className="flex-1"
+      <div className="grid gap-4">
+        {users.map((user) => {
+          const currentRole = user.user_roles?.[0]?.role || 'customer';
+          
+          return (
+            <Card key={user.id}>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg">{user.full_name || 'Unknown User'}</CardTitle>
+                    <p className="text-sm text-gray-600">{user.email}</p>
+                    <p className="text-xs text-gray-500 mt-1">ID: {user.id}</p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Badge variant={currentRole === 'admin' ? 'default' : 'secondary'}>
+                      {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}
+                    </Badge>
+                    <Select
+                      value={currentRole}
+                      onValueChange={(value: 'admin' | 'customer') => updateUserRole(user.id, value)}
                     >
-                      Make Admin
-                    </Button>
-                  )}
-                  {user.user_roles?.some(role => role.role === 'admin') && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => demoteToCustomer(user.id)}
-                      className="flex-1"
-                    >
-                      Remove Admin
-                    </Button>
-                  )}
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="customer">Customer</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardHeader>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
