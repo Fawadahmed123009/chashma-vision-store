@@ -12,9 +12,7 @@ interface User {
   full_name: string | null;
   role: string | null;
   created_at?: string;
-  user_roles: Array<{
-    role: 'admin' | 'customer';
-  }>;
+  current_role: 'admin' | 'customer';
 }
 
 const UsersPanel = () => {
@@ -24,19 +22,35 @@ const UsersPanel = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
+      // First get all profiles
+      const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user_roles (
-            role
-          )
-        `)
+        .select('*')
         .order('email');
 
-      if (error) throw error;
-      
-      setUsers(data || []);
+      if (profilesError) throw profilesError;
+
+      // Then get user roles for each profile
+      const usersWithRoles = await Promise.all(
+        (profiles || []).map(async (profile) => {
+          const { data: userRoles, error: rolesError } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', profile.id)
+            .limit(1);
+
+          if (rolesError) {
+            console.error('Error fetching user role:', rolesError);
+          }
+
+          return {
+            ...profile,
+            current_role: (userRoles && userRoles.length > 0 ? userRoles[0].role : 'customer') as 'admin' | 'customer'
+          };
+        })
+      );
+
+      setUsers(usersWithRoles);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -98,8 +112,6 @@ const UsersPanel = () => {
 
       <div className="grid gap-4">
         {users.map((user) => {
-          const currentRole = user.user_roles?.[0]?.role || 'customer';
-          
           return (
             <Card key={user.id}>
               <CardHeader>
@@ -110,11 +122,11 @@ const UsersPanel = () => {
                     <p className="text-xs text-gray-500 mt-1">ID: {user.id}</p>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Badge variant={currentRole === 'admin' ? 'default' : 'secondary'}>
-                      {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}
+                    <Badge variant={user.current_role === 'admin' ? 'default' : 'secondary'}>
+                      {user.current_role.charAt(0).toUpperCase() + user.current_role.slice(1)}
                     </Badge>
                     <Select
-                      value={currentRole}
+                      value={user.current_role}
                       onValueChange={(value: 'admin' | 'customer') => updateUserRole(user.id, value)}
                     >
                       <SelectTrigger className="w-32">
