@@ -28,14 +28,12 @@ const Header = () => {
   return (
     <header className="bg-white shadow-sm relative z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center">
-              <span className="text-gold font-bold text-sm">C</span>
-            </div>
-            <span className="text-xl font-bold text-navy">Chashma Co</span>
-          </Link>
+      <div className="flex items-center justify-between h-16">
+      {/* Logo */}
+      <Link to="/" className="flex items-center space-x-2">
+  <img src="/logo.png" alt="Chashma Co" className="h-28 w-auto object-contain" />
+</Link>
+
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">

@@ -11,10 +11,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-6">
             <Link to="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gold rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-navy font-bold text-lg">C</span>
-              </div>
-              <span className="text-white font-bold text-2xl">Chashma Co</span>
+  <img src="/footerlogo.png" alt="Chashma Co" className="h-40 w-auto object-contain" />
             </Link>
             <p className="text-gray-300 text-lg leading-relaxed">
               Where Vision Meets Style. Premium eyewear designed for the modern Pakistani lifestyle.

@@ -18,11 +18,11 @@ const HeroSection = () => {
                 playsInline
                 poster="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=400&fit=crop&fm=webp&q=80"
               >
-                <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
-                <source src="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4" type="video/mp4" />
+                <source src="/hero.mp4" type="video/mp4" />
+                <source src="hero2.mp4" type="video/mp4" />
                 {/* Fallback image if video doesn't load */}
                 <img
-                  src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=600&h=400&fit=crop&fm=webp&q=80"
+                  src="/heroimg.jpg"
                   alt="Stylish eyewear collection"
                   className="w-full h-80 lg:h-[600px] object-cover rounded-xl shadow-2xl"
                 />
