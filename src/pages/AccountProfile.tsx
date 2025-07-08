@@ -73,8 +73,8 @@ const AccountProfile = () => {
         <Header />
         <main className="py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-navy mb-4">Access Denied</h1>
-            <p className="text-gray-600">Please log in to view your profile.</p>
+            <h1 className="text-2xl font-bold text-primary mb-4">Access Denied</h1>
+            <p className="text-muted-foreground">Please log in to view your profile.</p>
           </div>
         </main>
         <Footer />
@@ -87,12 +87,12 @@ const AccountProfile = () => {
       <Header />
       <main className="py-12">
         <div className="container mx-auto px-4 max-w-2xl">
-          <h1 className="text-3xl font-bold text-navy mb-8">My Profile</h1>
+          <h1 className="text-3xl font-bold text-primary mb-8">My Profile</h1>
           
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="bg-card rounded-2xl shadow-lg p-8">
             <div className="mb-6">
-              <h2 className="text-xl font-semibold text-navy mb-2">Account Information</h2>
-              <p className="text-gray-600">Email: {user.email}</p>
+              <h2 className="text-xl font-semibold text-primary mb-2">Account Information</h2>
+              <p className="text-muted-foreground">Email: {user.email}</p>
             </div>
 
             <Form {...form}>

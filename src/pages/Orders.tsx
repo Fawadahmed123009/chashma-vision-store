@@ -8,12 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  confirmed: 'bg-blue-100 text-blue-800',
-  processing: 'bg-purple-100 text-purple-800',
-  shipped: 'bg-orange-100 text-orange-800',
-  delivered: 'bg-green-100 text-green-800',
-  cancelled: 'bg-red-100 text-red-800',
+  pending: 'bg-secondary text-secondary-foreground',
+  confirmed: 'bg-primary/10 text-primary',
+  processing: 'bg-accent/10 text-accent',
+  shipped: 'bg-accent/20 text-accent',
+  delivered: 'bg-accent text-accent-foreground',
+  cancelled: 'bg-destructive text-destructive-foreground',
 };
 
 const Orders = () => {
@@ -26,8 +26,8 @@ const Orders = () => {
         <Header />
         <main className="py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-navy mb-4">Access Denied</h1>
-            <p className="text-gray-600">Please log in to view your orders.</p>
+            <h1 className="text-2xl font-bold text-primary mb-4">Access Denied</h1>
+            <p className="text-muted-foreground">Please log in to view your orders.</p>
           </div>
         </main>
         <Footer />
@@ -40,16 +40,16 @@ const Orders = () => {
       <Header />
       <main className="py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-navy mb-8">My Orders</h1>
+          <h1 className="text-3xl font-bold text-primary mb-8">My Orders</h1>
 
           {isLoading ? (
             <div className="text-center py-8">
-              <p className="text-gray-600">Loading orders...</p>
+              <p className="text-muted-foreground">Loading orders...</p>
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-16">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">No orders yet</h2>
-              <p className="text-gray-600 mb-6">You haven't placed any orders yet.</p>
+              <h2 className="text-xl font-semibold text-foreground mb-4">No orders yet</h2>
+              <p className="text-muted-foreground mb-6">You haven't placed any orders yet.</p>
               <a href="/shop" className="btn-primary">
                 Start Shopping
               </a>
@@ -67,7 +67,7 @@ const Orders = () => {
                         <Badge className={statusColors[order.status as keyof typeof statusColors]}>
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </Badge>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-muted-foreground">
                           {new Date(order.created_at).toLocaleDateString()}
                         </span>
                       </div>
@@ -76,24 +76,24 @@ const Orders = () => {
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Total Amount</p>
-                        <p className="text-lg font-semibold text-navy">
+                        <p className="text-sm font-medium text-muted-foreground">Total Amount</p>
+                        <p className="text-lg font-semibold text-primary">
                           PKR {order.total_amount.toLocaleString()}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Payment Method</p>
-                        <p className="text-gray-900">{order.payment_method}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Payment Method</p>
+                        <p className="text-foreground">{order.payment_method}</p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Shipping Address</p>
-                        <p className="text-gray-900 text-sm">
+                        <p className="text-sm font-medium text-muted-foreground">Shipping Address</p>
+                        <p className="text-foreground text-sm">
                           {order.shipping_address?.street}, {order.shipping_address?.city}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Items</p>
-                        <p className="text-gray-900">
+                        <p className="text-sm font-medium text-muted-foreground">Items</p>
+                        <p className="text-foreground">
                           {order.order_items?.length || 0} item(s)
                         </p>
                       </div>
@@ -101,11 +101,11 @@ const Orders = () => {
 
                     {order.order_items && order.order_items.length > 0 && (
                       <div className="border-t pt-4">
-                        <h4 className="font-medium text-gray-900 mb-3">Order Items</h4>
+                        <h4 className="font-medium text-foreground mb-3">Order Items</h4>
                         <div className="space-y-2">
                           {order.order_items.map((item) => (
                             <div key={item.id} className="flex justify-between items-center text-sm">
-                              <span className="text-gray-600">
+                              <span className="text-muted-foreground">
                                 {item.product?.name} × {item.quantity}
                               </span>
                               <span className="font-medium">

@@ -25,7 +25,7 @@ interface AnalyticsData {
   }>;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))', 'hsl(var(--destructive))', 'hsl(var(--muted))', '#82CA9D'];
 
 const AnalyticsPanel = () => {
   const [analytics, setAnalytics] = useState<AnalyticsData>({
@@ -156,25 +156,25 @@ const AnalyticsPanel = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-navy">Analytics Dashboard</h2>
+      <h2 className="text-2xl font-semibold text-primary">Analytics Dashboard</h2>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Orders</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-navy">{analytics.totalOrders}</div>
+            <div className="text-2xl font-bold text-primary">{analytics.totalOrders}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-navy">
+            <div className="text-2xl font-bold text-primary">
               PKR {analytics.totalRevenue.toLocaleString()}
             </div>
           </CardContent>
@@ -182,10 +182,10 @@ const AnalyticsPanel = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Average Order Value</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Average Order Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-navy">
+            <div className="text-2xl font-bold text-primary">
               PKR {analytics.totalOrders > 0 ? Math.round(analytics.totalRevenue / analytics.totalOrders).toLocaleString() : 0}
             </div>
           </CardContent>
@@ -193,13 +193,13 @@ const AnalyticsPanel = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Top Product Sales</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Top Product Sales</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-navy">
+            <div className="text-2xl font-bold text-primary">
               {analytics.topProducts[0]?.total_sold || 0}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {analytics.topProducts[0]?.name || 'No sales yet'}
             </p>
           </CardContent>
@@ -229,7 +229,7 @@ const AnalyticsPanel = () => {
                     name === 'revenue' ? 'Revenue' : 'Orders'
                   ]}
                 />
-                <Bar dataKey="orders" fill="#8884d8" name="orders" />
+                <Bar dataKey="orders" fill="hsl(var(--primary))" name="orders" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -250,7 +250,7 @@ const AnalyticsPanel = () => {
                   labelLine={false}
                   label={({ status, count }) => `${status}: ${count}`}
                   outerRadius={80}
-                  fill="#8884d8"
+                  fill="hsl(var(--primary))"
                   dataKey="count"
                 >
                   {analytics.orderStatusBreakdown.map((entry, index) => (
@@ -278,13 +278,13 @@ const AnalyticsPanel = () => {
                     {index + 1}
                   </Badge>
                   <div>
-                    <p className="font-medium text-navy">{product.name}</p>
-                    <p className="text-sm text-gray-600">{product.total_sold} units sold</p>
+                    <p className="font-medium text-primary">{product.name}</p>
+                    <p className="text-sm text-muted-foreground">{product.total_sold} units sold</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-navy">PKR {product.revenue.toLocaleString()}</p>
-                  <p className="text-sm text-gray-600">Revenue</p>
+                  <p className="font-semibold text-primary">PKR {product.revenue.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Revenue</p>
                 </div>
               </div>
             ))}

@@ -8,41 +8,42 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 28% 17%;
+    --background: 0 0% 100%;
+    --foreground: 220 26% 10%;
 
-    --card: 210 20% 98%;
-    --card-foreground: 215 28% 17%;
+    --card: 210 16% 96%;
+    --card-foreground: 220 26% 10%;
 
-    --popover: 210 20% 98%;
-    --popover-foreground: 215 28% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 26% 10%;
 
-    --primary: 216 69% 13%;
-    --primary-foreground: 210 20% 98%;
+    --primary: 219 68% 33%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 9% 46%;
-    --secondary-foreground: 210 20% 98%;
+    --secondary: 210 16% 96%;
+    --secondary-foreground: 220 26% 10%;
 
-    --muted: 220 9% 46%;
-    --muted-foreground: 215 28% 17%;
+    --muted: 220 9% 65%;
+    --muted-foreground: 220 26% 10%;
 
-    --accent: 46 65% 52%;
-    --accent-foreground: 216 69% 13%;
+    --accent: 158 78% 39%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 9% 46%;
-    --input: 220 9% 46%;
-    --ring: 46 65% 52%;
+    --border: 220 9% 65%;
+    --input: 220 9% 65%;
+    --ring: 158 78% 39%;
 
     --radius: 0.75rem;
 
     /* Custom Chashma Co colors */
-    --navy: 216 69% 13%;
-    --gold: 46 65% 52%;
-    --light-gray: 210 20% 98%;
-    --medium-gray: 220 9% 46%;
+    --midnight: 219 68% 33%;
+    --mint: 158 78% 39%;
+    --light-gray: 210 16% 96%;
+    --dark-text: 220 26% 10%;
+    --medium-gray: 220 9% 65%;
   }
 
   * {
@@ -78,7 +79,7 @@
     transform: translateX(-50%);
     width: 60px;
     height: 2px;
-    background: linear-gradient(90deg, transparent, hsl(var(--gold)), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--accent)), transparent);
     border-radius: 1px;
   }
 
@@ -93,11 +94,11 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-[hsl(var(--navy))] text-white hover:bg-[hsl(var(--navy))]/90 transition-all duration-300 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105;
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-300 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105;
   }
   
   .btn-secondary {
-    @apply bg-[hsl(var(--gold))] text-[hsl(var(--navy))] hover:bg-[hsl(var(--gold))]/90 transition-all duration-300 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-105;
   }
   
   .card-hover {
@@ -105,7 +106,7 @@
   }
   
   .gradient-overlay {
-    background: linear-gradient(135deg, rgba(220, 226, 244, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(210, 216, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
   }
 
   .section-heading {
@@ -120,26 +121,26 @@
     transform: translateX(-50%);
     width: 80px;
     height: 3px;
-    background: linear-gradient(90deg, transparent, hsl(var(--gold)), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--accent)), transparent);
     border-radius: 2px;
   }
 }
 
 @layer utilities {
-  .text-navy {
-    color: hsl(var(--navy));
+  .text-midnight {
+    color: hsl(var(--midnight));
   }
   
-  .text-gold {
-    color: hsl(var(--gold));
+  .text-mint {
+    color: hsl(var(--mint));
   }
   
-  .bg-navy {
-    background-color: hsl(var(--navy));
+  .bg-midnight {
+    background-color: hsl(var(--midnight));
   }
   
-  .bg-gold {
-    background-color: hsl(var(--gold));
+  .bg-mint {
+    background-color: hsl(var(--mint));
   }
   
   .animate-fade-in {

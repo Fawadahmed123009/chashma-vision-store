@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
-    <section className="relative bg-gradient-to-br from-gray-50 to-white overflow-hidden min-h-[80vh] flex items-center">
+    <section className="relative bg-gradient-to-br from-background to-secondary overflow-hidden min-h-[80vh] flex items-center">
       <div className="container mx-auto px-4 py-12 lg:py-20">
         <div className="relative">
           {/* Hero Video Background */}
           <div className="relative animate-slide-up">
-            <div className="bg-gradient-to-br from-gold/20 to-navy/20 rounded-2xl p-6 lg:p-8">
+            <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-6 lg:p-8">
               <video
                 className="w-full h-80 lg:h-[600px] object-cover rounded-xl shadow-2xl"
                 autoPlay
@@ -33,7 +33,7 @@ const HeroSection = () => {
                 <div className="text-center space-y-8 animate-fade-in px-6">
                   <h1 className="font-bold text-white leading-tight text-4xl md:text-5xl lg:text-6xl">
                     Where Vision
-                    <span className="text-gold block">Meets Style</span>
+                    <span className="text-accent block">Meets Style</span>
                   </h1>
                   <p className="text-xl lg:text-2xl text-white/90 leading-relaxed max-w-2xl mx-auto">
                     Discover premium eyewear crafted for the modern Pakistani lifestyle. 
@@ -51,8 +51,8 @@ const HeroSection = () => {
               </div>
             </div>
             {/* Floating Elements */}
-            <div className="absolute -top-6 -right-6 w-20 h-20 lg:w-24 lg:h-24 bg-gold rounded-full opacity-20 animate-pulse"></div>
-            <div className="absolute -bottom-8 -left-8 w-24 h-24 lg:w-32 lg:h-32 bg-navy rounded-full opacity-10 animate-pulse delay-1000"></div>
+            <div className="absolute -top-6 -right-6 w-20 h-20 lg:w-24 lg:h-24 bg-accent rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-8 -left-8 w-24 h-24 lg:w-32 lg:h-32 bg-primary rounded-full opacity-10 animate-pulse delay-1000"></div>
           </div>
         </div>
       </div>

@@ -28,8 +28,8 @@ const AdminDashboard = () => {
         <Header />
         <main className="py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-navy mb-4">Loading...</h1>
-            <p className="text-gray-600">Checking admin permissions...</p>
+            <h1 className="text-2xl font-bold text-primary mb-4">Loading...</h1>
+            <p className="text-muted-foreground">Checking admin permissions...</p>
           </div>
         </main>
       </div>
@@ -42,8 +42,8 @@ const AdminDashboard = () => {
         <Header />
         <main className="py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-navy mb-4">Please Sign In</h1>
-            <p className="text-gray-600">You need to be logged in to access the admin panel.</p>
+            <h1 className="text-2xl font-bold text-primary mb-4">Please Sign In</h1>
+            <p className="text-muted-foreground">You need to be logged in to access the admin panel.</p>
           </div>
         </main>
       </div>
@@ -56,9 +56,9 @@ const AdminDashboard = () => {
         <Header />
         <main className="py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-navy mb-4">Access Denied</h1>
-            <p className="text-gray-600">You don't have permission to access this page.</p>
-            <p className="text-sm text-gray-500 mt-2">User ID: {user.id}</p>
+            <h1 className="text-2xl font-bold text-primary mb-4">Access Denied</h1>
+            <p className="text-muted-foreground">You don't have permission to access this page.</p>
+            <p className="text-sm text-muted-foreground/60 mt-2">User ID: {user.id}</p>
           </div>
         </main>
       </div>
@@ -70,7 +70,7 @@ const AdminDashboard = () => {
       <Header />
       <main className="py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-navy mb-8">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold text-primary mb-8">Admin Dashboard</h1>
           
           <Tabs defaultValue="analytics" className="space-y-6">
             <TabsList className="grid w-full grid-cols-5">
@@ -87,7 +87,7 @@ const AdminDashboard = () => {
             
             <TabsContent value="products" className="space-y-6">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-semibold text-navy">Products Management</h2>
+                <h2 className="text-2xl font-semibold text-primary">Products Management</h2>
                 <div className="flex space-x-2">
                   <Button
                     variant={productsView === 'grid' ? 'default' : 'outline'}

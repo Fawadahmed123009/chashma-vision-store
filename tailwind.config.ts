@@ -61,7 +61,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				midnight: '#1E3A8A',
+				mint: '#10B981',
+				light: '#F3F4F6',
+				dark: '#111827',
+				gray: '#9CA3AF'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
