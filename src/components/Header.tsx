@@ -1,45 +1,42 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import { useAdminData } from '@/hooks/useAdminData';
-import { useCart } from '@/hooks/useCart';
-import { ShoppingBag, User, Menu, X, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Menu, X, ShoppingCart, User } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
-  const { isAdmin } = useAdminData();
   const { getTotalItems } = useCart();
+  const { isAdmin } = useAdminData();
+  const navigate = useNavigate();
+
+  const cartItemsCount = getTotalItems();
 
   const handleSignOut = async () => {
     await signOut();
-    setIsMenuOpen(false);
+    navigate('/');
   };
 
   return (
-    <header className="bg-white shadow-sm relative z-50">
+    <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
       <div className="container mx-auto px-4">
-      <div className="flex items-center justify-between h-16">
-      {/* Logo */}
-      <Link to="/" className="flex items-center space-x-2">
-  <img src="/logo.png" alt="Chashma Co" className="h-28 w-auto object-contain" />
-</Link>
-
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-navy rounded-full flex items-center justify-center">
+              <span className="text-gold font-bold text-sm">C</span>
+            </div>
+            <span className="text-xl font-bold text-navy">Chashma Co</span>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-navy transition-colors">
-              Home
-            </Link>
             <Link to="/shop" className="text-gray-700 hover:text-navy transition-colors">
               Shop
             </Link>
@@ -49,9 +46,6 @@ const Header = () => {
             <Link to="/women" className="text-gray-700 hover:text-navy transition-colors">
               Women
             </Link>
-            <Link to="/sunglasses" className="text-gray-700 hover:text-navy transition-colors">
-              Sunglasses
-            </Link>
             <Link to="/about" className="text-gray-700 hover:text-navy transition-colors">
               About
             </Link>
@@ -60,187 +54,108 @@ const Header = () => {
             </Link>
           </nav>
 
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Actions */}
+          <div className="flex items-center space-x-4">
+            {/* Cart */}
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="sm" className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                {cartItemsCount > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                    {cartItemsCount}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+
+            {/* User Menu */}
             {user ? (
-              <>
-                <Link to="/cart" className="relative p-2 text-gray-700 hover:text-navy transition-colors">
-                  <ShoppingBag className="w-6 h-6" />
-                  {getTotalItems() > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gold text-navy text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                      {getTotalItems()}
-                    </span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/account/profile">My Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/account/orders">My Orders</Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin">Admin Dashboard</Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
-                </Link>
-                
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                      <User className="w-5 h-5" />
-                      <span>Account</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="flex items-center">
-                        <User className="w-4 h-4 mr-2" />
-                        Profile
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/orders" className="flex items-center">
-                        <ShoppingBag className="w-4 h-4 mr-2" />
-                        Orders
-                      </Link>
-                    </DropdownMenuItem>
-                    {isAdmin && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link to="/admin" className="flex items-center text-blue-600">
-                            <Shield className="w-4 h-4 mr-2" />
-                            Admin Panel
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center text-red-600">
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link to="/auth">
-                <Button className="btn-primary">
+                <Button variant="outline" size="sm">
                   Sign In
                 </Button>
               </Link>
             )}
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-gray-700"
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t">
-            <nav className="space-y-2">
-              <Link
-                to="/"
-                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
+            <nav className="flex flex-col space-y-4">
               <Link
                 to="/shop"
-                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                className="text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Shop
               </Link>
               <Link
                 to="/men"
-                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                className="text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Men
               </Link>
               <Link
                 to="/women"
-                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                className="text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Women
               </Link>
               <Link
-                to="/sunglasses"
-                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sunglasses
-              </Link>
-              <Link
                 to="/about"
-                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                className="text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
               <Link
                 to="/contact"
-                className="block px-4 py-2 text-gray-700 hover:text-navy transition-colors"
+                className="text-gray-700 hover:text-navy transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
               </Link>
-              
-              {user ? (
-                <>
-                  <div className="border-t pt-2 mt-2">
-                    <Link
-                      to="/cart"
-                      className="flex items-center px-4 py-2 text-gray-700 hover:text-navy transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <ShoppingBag className="w-5 h-5 mr-2" />
-                      Cart ({getTotalItems()})
-                    </Link>
-                    <Link
-                      to="/profile"
-                      className="flex items-center px-4 py-2 text-gray-700 hover:text-navy transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <User className="w-5 h-5 mr-2" />
-                      Profile
-                    </Link>
-                    <Link
-                      to="/orders"
-                      className="flex items-center px-4 py-2 text-gray-700 hover:text-navy transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <ShoppingBag className="w-5 h-5 mr-2" />
-                      Orders
-                    </Link>
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        className="flex items-center px-4 py-2 text-blue-600 hover:bg-blue-50 transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Shield className="w-5 h-5 mr-2" />
-                        Admin Panel
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left transition-colors"
-                    >
-                      <LogOut className="w-5 h-5 mr-2" />
-                      Sign Out
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="border-t pt-2 mt-2">
-                  <Link
-                    to="/auth"
-                    className="block px-4 py-2 text-navy font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign In
-                  </Link>
-                </div>
-              )}
             </nav>
           </div>
         )}

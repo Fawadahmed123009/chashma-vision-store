@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +11,8 @@ interface Order {
   order_number: string;
   total_amount: number;
   payment_method: string;
+  payment_reference: string | null;
+  payment_status: string | null;
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   created_at: string;
   shipping_address: any;
@@ -32,6 +33,19 @@ const statusColors = {
   shipped: 'bg-orange-100 text-orange-800',
   delivered: 'bg-green-100 text-green-800',
   cancelled: 'bg-red-100 text-red-800',
+};
+
+const paymentStatusColors = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  confirmed: 'bg-green-100 text-green-800',
+  failed: 'bg-red-100 text-red-800',
+};
+
+const paymentMethodLabels = {
+  cod: 'Cash on Delivery',
+  easypaisa: 'EasyPaisa',
+  jazzcash: 'JazzCash',
+  bank_transfer: 'Bank Transfer',
 };
 
 const OrdersPanel = () => {
@@ -94,6 +108,30 @@ const OrdersPanel = () => {
     }
   };
 
+  const updatePaymentStatus = async (orderId: string, newPaymentStatus: 'pending' | 'confirmed' | 'failed') => {
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ payment_status: newPaymentStatus })
+        .eq('id', orderId);
+
+      if (error) throw error;
+      
+      await fetchOrders();
+      toast({
+        title: "Success",
+        description: "Payment status updated successfully.",
+      });
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update payment status.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
 
@@ -143,7 +181,14 @@ const OrdersPanel = () => {
                   <p className="text-xl font-semibold text-navy">
                     PKR {order.total_amount.toLocaleString()}
                   </p>
-                  <p className="text-sm text-gray-600">{order.payment_method}</p>
+                  <p className="text-sm text-gray-600">
+                    {paymentMethodLabels[order.payment_method as keyof typeof paymentMethodLabels] || order.payment_method}
+                  </p>
+                  {order.payment_reference && (
+                    <p className="text-xs text-gray-500 font-mono mt-1">
+                      Ref: {order.payment_reference}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardHeader>
@@ -166,23 +211,29 @@ const OrdersPanel = () => {
                   <div className="text-sm text-gray-600">
                     <p>{order.shipping_address?.full_name}</p>
                     <p>{order.shipping_address?.phone}</p>
-                    <p>{order.shipping_address?.street}</p>
-                    <p>{order.shipping_address?.city}, {order.shipping_address?.postal_code}</p>
+                    <p>{order.shipping_address?.address}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-6 pt-4 border-t">
-                <Badge className={statusColors[order.status]}>
-                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                </Badge>
+              <div className="flex flex-wrap items-center justify-between mt-6 pt-4 border-t gap-4">
+                <div className="flex flex-wrap gap-2">
+                  <Badge className={statusColors[order.status]}>
+                    Order: {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  </Badge>
+                  {order.payment_status && (
+                    <Badge className={paymentStatusColors[order.payment_status as keyof typeof paymentStatusColors] || 'bg-gray-100 text-gray-800'}>
+                      Payment: {order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1)}
+                    </Badge>
+                  )}
+                </div>
                 
                 <div className="flex items-center space-x-3">
                   <Select
                     value={order.status}
                     onValueChange={(value: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled') => updateOrderStatus(order.id, value)}
                   >
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-32">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -194,6 +245,22 @@ const OrdersPanel = () => {
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
+
+                  {order.payment_method !== 'cod' && (
+                    <Select
+                      value={order.payment_status || 'pending'}
+                      onValueChange={(value: 'pending' | 'confirmed' | 'failed') => updatePaymentStatus(order.id, value)}
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Payment Pending</SelectItem>
+                        <SelectItem value="confirmed">Payment Confirmed</SelectItem>
+                        <SelectItem value="failed">Payment Failed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
               </div>
             </CardContent>

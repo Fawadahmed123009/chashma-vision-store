@@ -137,8 +137,7 @@ const Cart = () => {
                   <h3 className="font-medium text-navy mb-2">We Accept</h3>
                   <div className="text-sm text-gray-600 space-y-1">
                     <p>• Cash on Delivery</p>
-                    <p>• JazzCash</p>
-                    <p>• EasyPaisa</p>
+                    <p>• Expected delivery: 3-5 days</p>
                   </div>
                 </div>
               </div>
