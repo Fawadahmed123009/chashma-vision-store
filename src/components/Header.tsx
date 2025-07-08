@@ -24,7 +24,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
+    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
       {/* Logo */}
@@ -34,19 +34,19 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/shop" className="text-gray-700 hover:text-navy transition-colors">
+            <Link to="/shop" className="text-muted-foreground hover:text-accent transition-colors">
               Shop
             </Link>
-            <Link to="/men" className="text-gray-700 hover:text-navy transition-colors">
+            <Link to="/men" className="text-muted-foreground hover:text-accent transition-colors">
               Men
             </Link>
-            <Link to="/women" className="text-gray-700 hover:text-navy transition-colors">
+            <Link to="/women" className="text-muted-foreground hover:text-accent transition-colors">
               Women
             </Link>
-            <Link to="/about" className="text-gray-700 hover:text-navy transition-colors">
+            <Link to="/about" className="text-muted-foreground hover:text-accent transition-colors">
               About
             </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-navy transition-colors">
+            <Link to="/contact" className="text-muted-foreground hover:text-accent transition-colors">
               Contact
             </Link>
           </nav>
@@ -116,39 +116,39 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="md:hidden py-4 border-t border-border">
             <nav className="flex flex-col space-y-4">
               <Link
                 to="/shop"
-                className="text-gray-700 hover:text-navy transition-colors"
+                className="text-muted-foreground hover:text-accent transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Shop
               </Link>
               <Link
                 to="/men"
-                className="text-gray-700 hover:text-navy transition-colors"
+                className="text-muted-foreground hover:text-accent transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Men
               </Link>
               <Link
                 to="/women"
-                className="text-gray-700 hover:text-navy transition-colors"
+                className="text-muted-foreground hover:text-accent transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Women
               </Link>
               <Link
                 to="/about"
-                className="text-gray-700 hover:text-navy transition-colors"
+                className="text-muted-foreground hover:text-accent transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
               <Link
                 to="/contact"
-                className="text-gray-700 hover:text-navy transition-colors"
+                className="text-muted-foreground hover:text-accent transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact

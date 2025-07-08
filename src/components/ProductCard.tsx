@@ -38,15 +38,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
       <Link to={`/product/${product.id}`}>
-        <div className="aspect-square bg-gray-100 overflow-hidden relative">
+        <div className="aspect-square bg-muted overflow-hidden relative">
           <img
             src={product.images[0] || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {!inStock && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white font-semibold text-lg">Out of Stock</span>
+            <div className="absolute inset-0 bg-primary/80 flex items-center justify-center">
+              <span className="text-primary-foreground font-semibold text-lg">Out of Stock</span>
             </div>
           )}
         </div>
@@ -56,11 +56,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
             <Link to={`/product/${product.id}`}>
-              <h3 className="font-semibold text-navy hover:text-navy/80 transition-colors">
+              <h3 className="font-semibold text-primary hover:text-accent transition-colors">
                 {product.name}
               </h3>
             </Link>
-            <p className="text-sm text-gray-600">{product.brand}</p>
+            <p className="text-sm text-muted-foreground">{product.brand}</p>
           </div>
           <div className="flex flex-wrap gap-1">
             {onSale && (
@@ -83,11 +83,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <span className="font-bold text-navy">
+            <span className="font-bold text-primary">
               PKR {product.price.toLocaleString()}
             </span>
             {onSale && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-sm text-muted-foreground line-through">
                 PKR {product.original_price?.toLocaleString()}
               </span>
             )}
@@ -95,7 +95,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         <div className="mb-3">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {inStock ? `${product.stock_quantity} in stock` : 'Out of stock'}
           </p>
         </div>
