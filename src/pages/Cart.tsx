@@ -36,11 +36,11 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-navy mb-8">Shopping Cart</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-8">Shopping Cart</h1>
 
           {cartItems.length === 0 ? (
             <div className="text-center py-16">
@@ -55,16 +55,16 @@ const Cart = () => {
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg p-6 shadow-sm border flex items-center space-x-4">
+                  <div key={item.id} className="bg-card rounded-lg p-6 shadow-sm border border-border flex items-center space-x-4">
                     <img
                       src={item.product.images[0]}
                       alt={item.product.name}
                       className="w-24 h-24 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-navy text-lg">{item.product.name}</h3>
-                      <p className="text-gray-600 mb-2">PKR {item.product.price.toLocaleString()}</p>
-                      <p className="text-sm text-gray-500">
+                      <h3 className="font-semibold text-foreground text-lg">{item.product.name}</h3>
+                      <p className="text-muted-foreground mb-2">PKR {item.product.price.toLocaleString()}</p>
+                      <p className="text-sm text-muted-foreground">
                         Stock: {item.product.stock_quantity} available
                       </p>
                     </div>
@@ -77,7 +77,7 @@ const Cart = () => {
                       >
                         <Minus className="w-4 h-4" />
                       </Button>
-                      <span className="px-3 py-1 bg-gray-100 rounded min-w-[2rem] text-center">
+                      <span className="px-3 py-1 bg-muted rounded min-w-[2rem] text-center">
                         {item.quantity}
                       </span>
                       <Button
@@ -90,7 +90,7 @@ const Cart = () => {
                       </Button>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-navy text-lg">
+                      <p className="font-semibold text-foreground text-lg">
                         PKR {(item.product.price * item.quantity).toLocaleString()}
                       </p>
                       <Button
@@ -108,21 +108,21 @@ const Cart = () => {
               </div>
 
               {/* Order Summary */}
-              <div className="bg-white rounded-lg p-6 shadow-sm border h-fit">
-                <h2 className="text-xl font-semibold text-navy mb-6">Order Summary</h2>
+              <div className="bg-card rounded-lg p-6 shadow-sm border border-border h-fit">
+                <h2 className="text-xl font-semibold text-foreground mb-6">Order Summary</h2>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Items ({getTotalItems()})</span>
-                    <span className="font-medium">PKR {subtotal.toLocaleString()}</span>
+                    <span className="text-muted-foreground">Items ({getTotalItems()})</span>
+                    <span className="font-medium text-foreground">PKR {subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping</span>
-                    <span className="font-medium">PKR {shipping.toLocaleString()}</span>
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span className="font-medium text-foreground">PKR {shipping.toLocaleString()}</span>
                   </div>
-                  <div className="border-t pt-3 flex justify-between">
-                    <span className="text-lg font-semibold text-navy">Total</span>
-                    <span className="text-lg font-bold text-navy">PKR {total.toLocaleString()}</span>
+                  <div className="border-t border-border pt-3 flex justify-between">
+                    <span className="text-lg font-semibold text-foreground">Total</span>
+                    <span className="text-lg font-bold text-primary">PKR {total.toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -133,9 +133,9 @@ const Cart = () => {
                   Proceed to Checkout
                 </Button>
 
-                <div className="mt-4 pt-4 border-t">
-                  <h3 className="font-medium text-navy mb-2">We Accept</h3>
-                  <div className="text-sm text-gray-600 space-y-1">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <h3 className="font-medium text-foreground mb-2">We Accept</h3>
+                  <div className="text-sm text-muted-foreground space-y-1">
                     <p>• Cash on Delivery</p>
                     <p>• Expected delivery: 3-5 days</p>
                   </div>

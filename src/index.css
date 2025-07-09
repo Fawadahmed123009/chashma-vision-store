@@ -8,42 +8,43 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 26% 10%;
+    /* Dark Mode Color Palette */
+    --background: 214 32% 6%;       /* #0d1117 - Deep navy-black */
+    --foreground: 213 27% 94%;      /* #f0f6fc - White/near-white */
 
-    --card: 210 16% 96%;
-    --card-foreground: 220 26% 10%;
+    --card: 214 24% 11%;            /* #161b22 - Dark gray-blue */
+    --card-foreground: 213 27% 94%; /* #f0f6fc - White/near-white */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 26% 10%;
+    --popover: 214 24% 11%;         /* #161b22 - Dark gray-blue */
+    --popover-foreground: 213 27% 94%; /* #f0f6fc - White/near-white */
 
-    --primary: 219 68% 33%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 212 100% 56%;        /* #1f6feb - Vivid blue */
+    --primary-foreground: 213 27% 94%; /* #f0f6fc - White/near-white */
 
-    --secondary: 210 16% 96%;
-    --secondary-foreground: 220 26% 10%;
+    --secondary: 215 20% 16%;       /* #21262d - Slightly lighter than background */
+    --secondary-foreground: 213 27% 94%; /* #f0f6fc - White/near-white */
 
-    --muted: 220 9% 65%;
-    --muted-foreground: 220 26% 10%;
+    --muted: 215 20% 16%;           /* #21262d - Slightly lighter than background */
+    --muted-foreground: 213 12% 59%; /* #8b949e - Cool muted gray */
 
-    --accent: 158 78% 39%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 137 72% 31%;          /* #238636 - Green for success states */
+    --accent-foreground: 213 27% 94%; /* #f0f6fc - White/near-white */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 7 72% 64%;       /* #f85149 - Bright red for danger */
+    --destructive-foreground: 213 27% 94%; /* #f0f6fc - White/near-white */
 
-    --border: 220 9% 65%;
-    --input: 220 9% 65%;
-    --ring: 158 78% 39%;
+    --border: 214 13% 20%;          /* #30363d - Subtle separator lines */
+    --input: 215 20% 16%;           /* #21262d - Slightly lighter than background */
+    --ring: 212 100% 56%;           /* #1f6feb - Vivid blue */
 
     --radius: 0.75rem;
 
-    /* Custom Chashma Co colors */
-    --midnight: 219 68% 33%;
-    --mint: 158 78% 39%;
-    --light-gray: 210 16% 96%;
-    --dark-text: 220 26% 10%;
-    --medium-gray: 220 9% 65%;
+    /* Custom Dark Theme colors */
+    --midnight: 214 32% 6%;         /* #0d1117 - Deep navy-black */
+    --mint: 137 72% 31%;            /* #238636 - Green accent */
+    --light-gray: 214 24% 11%;      /* #161b22 - Dark gray-blue */
+    --dark-text: 213 27% 94%;       /* #f0f6fc - White/near-white */
+    --medium-gray: 213 12% 59%;     /* #8b949e - Cool muted gray */
   }
 
   * {
@@ -55,6 +56,8 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 16px;
     line-height: 1.6;
+    /* Ensure dark theme is applied globally */
+    color-scheme: dark;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -106,7 +109,7 @@
   }
   
   .gradient-overlay {
-    background: linear-gradient(135deg, rgba(210, 216, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(31, 111, 235, 0.1) 0%, rgba(35, 134, 54, 0.1) 100%);
   }
 
   .section-heading {

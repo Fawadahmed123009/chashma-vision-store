@@ -24,7 +24,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
+    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
       {/* Logo */}
@@ -34,19 +34,19 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/shop" className="text-muted-foreground hover:text-accent transition-colors">
+            <Link to="/shop" className="text-muted-foreground hover:text-primary transition-colors">
               Shop
             </Link>
-            <Link to="/men" className="text-muted-foreground hover:text-accent transition-colors">
+            <Link to="/men" className="text-muted-foreground hover:text-primary transition-colors">
               Men
             </Link>
-            <Link to="/women" className="text-muted-foreground hover:text-accent transition-colors">
+            <Link to="/women" className="text-muted-foreground hover:text-primary transition-colors">
               Women
             </Link>
-            <Link to="/about" className="text-muted-foreground hover:text-accent transition-colors">
+            <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
               About
             </Link>
-            <Link to="/contact" className="text-muted-foreground hover:text-accent transition-colors">
+            <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
               Contact
             </Link>
           </nav>
@@ -73,23 +73,23 @@ const Header = () => {
                     <User className="w-5 h-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 bg-card border-border">
                   <DropdownMenuItem asChild>
-                    <Link to="/account/profile">My Profile</Link>
+                    <Link to="/account/profile" className="text-foreground hover:bg-muted">My Profile</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/account/orders">My Orders</Link>
+                    <Link to="/account/orders" className="text-foreground hover:bg-muted">My Orders</Link>
                   </DropdownMenuItem>
                   {isAdmin && (
                     <>
-                      <DropdownMenuSeparator />
+                      <DropdownMenuSeparator className="bg-border" />
                       <DropdownMenuItem asChild>
-                        <Link to="/admin">Admin Dashboard</Link>
+                        <Link to="/admin" className="text-foreground hover:bg-muted">Admin Dashboard</Link>
                       </DropdownMenuItem>
                     </>
                   )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
+                  <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive hover:bg-muted">
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -120,35 +120,35 @@ const Header = () => {
             <nav className="flex flex-col space-y-4">
               <Link
                 to="/shop"
-                className="text-muted-foreground hover:text-accent transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Shop
               </Link>
               <Link
                 to="/men"
-                className="text-muted-foreground hover:text-accent transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Men
               </Link>
               <Link
                 to="/women"
-                className="text-muted-foreground hover:text-accent transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Women
               </Link>
               <Link
                 to="/about"
-                className="text-muted-foreground hover:text-accent transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
               <Link
                 to="/contact"
-                className="text-muted-foreground hover:text-accent transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact

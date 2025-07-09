@@ -45,8 +45,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {!inStock && (
-            <div className="absolute inset-0 bg-primary/80 flex items-center justify-center">
-              <span className="text-primary-foreground font-semibold text-lg">Out of Stock</span>
+            <div className="absolute inset-0 bg-destructive/80 flex items-center justify-center">
+              <span className="text-destructive-foreground font-semibold text-lg">Out of Stock</span>
             </div>
           )}
         </div>
@@ -56,7 +56,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
             <Link to={`/product/${product.id}`}>
-              <h3 className="font-semibold text-primary hover:text-accent transition-colors">
+              <h3 className="font-semibold text-foreground hover:text-primary transition-colors">
                 {product.name}
               </h3>
             </Link>
@@ -64,12 +64,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
           <div className="flex flex-wrap gap-1">
             {onSale && (
-              <Badge variant="destructive" className="text-xs">
+              <Badge className="text-xs bg-accent text-accent-foreground">
                 Sale
               </Badge>
             )}
             {!inStock && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs border-destructive text-destructive">
                 Out of Stock
               </Badge>
             )}

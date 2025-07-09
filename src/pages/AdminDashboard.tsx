@@ -66,11 +66,11 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-primary mb-8">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-8">Admin Dashboard</h1>
           
           <Tabs defaultValue="analytics" className="space-y-6">
             <TabsList className="grid w-full grid-cols-5">
@@ -87,7 +87,7 @@ const AdminDashboard = () => {
             
             <TabsContent value="products" className="space-y-6">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-semibold text-primary">Products Management</h2>
+                <h2 className="text-2xl font-semibold text-foreground">Products Management</h2>
                 <div className="flex space-x-2">
                   <Button
                     variant={productsView === 'grid' ? 'default' : 'outline'}

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
-    <section className="relative bg-gradient-to-br from-background to-secondary overflow-hidden min-h-[80vh] flex items-center">
+    <section className="relative bg-gradient-to-br from-background to-card overflow-hidden min-h-[80vh] flex items-center">
       <div className="container mx-auto px-4 py-12 lg:py-20">
         <div className="relative">
           {/* Hero Video Background */}
@@ -29,13 +29,13 @@ const HeroSection = () => {
               </video>
               
               {/* Overlay Content */}
-              <div className="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center">
+              <div className="absolute inset-0 bg-background/60 backdrop-blur-sm rounded-xl flex items-center justify-center">
                 <div className="text-center space-y-8 animate-fade-in px-6">
-                  <h1 className="font-bold text-white leading-tight text-4xl md:text-5xl lg:text-6xl">
+                  <h1 className="font-bold text-foreground leading-tight text-4xl md:text-5xl lg:text-6xl">
                     Where Vision
-                    <span className="text-accent block">Meets Style</span>
+                    <span className="text-primary block">Meets Style</span>
                   </h1>
-                  <p className="text-xl lg:text-2xl text-white/90 leading-relaxed max-w-2xl mx-auto">
+                  <p className="text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
                     Discover premium eyewear crafted for the modern Pakistani lifestyle. 
                     From prescription glasses to designer sunglasses, find your perfect frames.
                   </p>

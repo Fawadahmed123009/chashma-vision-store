@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-	darkMode: ["class"],
+	darkMode: "class",
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -62,11 +62,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				midnight: '#1E3A8A',
-				mint: '#10B981',
-				light: '#F3F4F6',
-				dark: '#111827',
-				gray: '#9CA3AF'
+				midnight: '#0d1117',    /* Deep navy-black background */
+				mint: '#238636',       /* Green accent */
+				light: '#161b22',      /* Dark gray-blue for cards */
+				dark: '#f0f6fc',       /* White/near-white text */
+				gray: '#8b949e'        /* Cool muted gray */
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
