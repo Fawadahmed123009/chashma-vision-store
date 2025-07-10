@@ -30,13 +30,13 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   return (
-    <section className="py-16 lg:py-24 bg-gray-50">
+    <section className="py-16 lg:py-24 bg-secondary">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in-up">
-          <h2 className="font-bold text-navy mb-6 section-heading">
+          <h2 className="font-bold text-foreground mb-6 section-heading">
             What Our Customers Say
           </h2>
-          <p className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Join thousands of satisfied customers who trust Chashma Co for their eyewear needs
           </p>
         </div>
@@ -45,7 +45,7 @@ const TestimonialsSection = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id}
-              className={`bg-white rounded-2xl p-8 shadow-lg card-hover animate-stagger-${Math.min(index + 1, 3)}`}
+              className={`bg-card rounded-2xl p-8 shadow-lg border border-border card-hover animate-stagger-${Math.min(index + 1, 3)}`}
             >
               <div className="flex items-center mb-6">
                 <img
@@ -55,18 +55,18 @@ const TestimonialsSection = () => {
                   loading="lazy"
                 />
                 <div>
-                  <h4 className="font-semibold text-navy text-lg">{testimonial.name}</h4>
-                  <p className="text-gray-600">{testimonial.location}</p>
+                  <h4 className="font-semibold text-foreground text-lg">{testimonial.name}</h4>
+                  <p className="text-muted-foreground">{testimonial.location}</p>
                 </div>
               </div>
               
               <div className="flex mb-6">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <span key={i} className="text-gold text-xl">★</span>
+                  <span key={i} className="text-accent text-xl">★</span>
                 ))}
               </div>
               
-              <p className="text-gray-700 italic text-lg leading-relaxed">
+              <p className="text-muted-foreground italic text-lg leading-relaxed">
                 "{testimonial.text}"
               </p>
             </div>

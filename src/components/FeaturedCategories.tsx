@@ -35,13 +35,13 @@ const categories = [
 
 const FeaturedCategories = () => {
   return (
-    <section className="py-16 lg:py-24 bg-white">
+    <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in-up">
-          <h2 className="font-bold text-navy mb-6 section-heading">
+          <h2 className="font-bold text-foreground mb-6 section-heading">
             Shop by Category
           </h2>
-          <p className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Find the perfect frames for every occasion and style preference
           </p>
         </div>
@@ -51,7 +51,7 @@ const FeaturedCategories = () => {
             <Link
               key={category.id}
               to={category.link}
-              className={`group card-hover bg-white rounded-2xl overflow-hidden shadow-lg animate-stagger-${Math.min(index + 1, 3)}`}
+              className={`group card-hover bg-card rounded-2xl overflow-hidden shadow-lg border border-border animate-stagger-${Math.min(index + 1, 3)}`}
             >
               <div className="relative overflow-hidden">
                 <img
@@ -60,13 +60,13 @@ const FeaturedCategories = () => {
                   className="w-full h-56 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300"></div>
+                <div className="absolute inset-0 bg-background/20 group-hover:bg-background/40 transition-colors duration-300"></div>
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-semibold text-navy mb-3 group-hover:text-gold transition-colors duration-300">
+                <h3 className="text-2xl font-semibold text-foreground mb-3 group-hover:text-accent transition-colors duration-300">
                   {category.title}
                 </h3>
-                <p className="text-gray-600 text-lg">
+                <p className="text-muted-foreground text-lg">
                   {category.description}
                 </p>
               </div>

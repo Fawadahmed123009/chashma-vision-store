@@ -174,11 +174,11 @@ const Shop = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-background">
         <Header />
         <main className="py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-navy mb-4">Loading products...</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-4">Loading products...</h1>
           </div>
         </main>
         <Footer />
@@ -187,12 +187,12 @@ const Shop = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-navy">{getPageTitle()}</h1>
+            <h1 className="text-3xl font-bold text-foreground">{getPageTitle()}</h1>
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
@@ -208,13 +208,13 @@ const Shop = () => {
             <div className={`space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-navy mb-4">Filters</h3>
+                  <h3 className="font-semibold text-foreground mb-4">Filters</h3>
                   
                   {/* Search */}
                   <div className="space-y-2 mb-6">
-                    <label className="text-sm font-medium text-gray-700">Search</label>
+                    <label className="text-sm font-medium text-foreground">Search</label>
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                       <Input
                         placeholder="Search products..."
                         value={searchTerm}
@@ -226,7 +226,7 @@ const Shop = () => {
 
                   {/* Gender Filter */}
                   <div className="space-y-2 mb-6">
-                    <label className="text-sm font-medium text-gray-700">Gender</label>
+                    <label className="text-sm font-medium text-foreground">Gender</label>
                     <Select value={filterGender} onValueChange={setFilterGender}>
                       <SelectTrigger>
                         <SelectValue />
@@ -242,7 +242,7 @@ const Shop = () => {
 
                   {/* Shape Filter */}
                   <div className="space-y-2 mb-6">
-                    <label className="text-sm font-medium text-gray-700">Shape</label>
+                    <label className="text-sm font-medium text-foreground">Shape</label>
                     <Select value={filterShape} onValueChange={setFilterShape}>
                       <SelectTrigger>
                         <SelectValue />
@@ -260,7 +260,7 @@ const Shop = () => {
 
                   {/* Brand Filter */}
                   <div className="space-y-2 mb-6">
-                    <label className="text-sm font-medium text-gray-700">Brand</label>
+                    <label className="text-sm font-medium text-foreground">Brand</label>
                     <Select value={filterBrand} onValueChange={setFilterBrand}>
                       <SelectTrigger>
                         <SelectValue />
@@ -278,7 +278,7 @@ const Shop = () => {
 
                   {/* Price Range */}
                   <div className="space-y-2 mb-6">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-foreground">
                       Price Range: PKR {priceRange[0].toLocaleString()} - PKR {priceRange[1].toLocaleString()}
                     </label>
                     <Slider
@@ -306,11 +306,11 @@ const Shop = () => {
             <div className="lg:col-span-3">
               {/* Sort Options */}
               <div className="flex justify-between items-center mb-6">
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Showing {filteredProducts.length} of {products.length} products
                 </p>
                 <div className="flex items-center space-x-2">
-                  <label className="text-sm text-gray-600">Sort by:</label>
+                  <label className="text-sm text-muted-foreground">Sort by:</label>
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-40">
                       <SelectValue />
@@ -328,8 +328,8 @@ const Shop = () => {
               {/* Products */}
               {filteredProducts.length === 0 ? (
                 <div className="text-center py-12">
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
-                  <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">No products found</h3>
+                  <p className="text-muted-foreground mb-4">Try adjusting your filters or search terms</p>
                   <Button onClick={clearFilters}>Clear All Filters</Button>
                 </div>
               ) : (

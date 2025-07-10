@@ -37,16 +37,16 @@ const instagramPosts = [
 
 const InstagramFeed = () => {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Instagram className="w-8 h-8 text-gold mr-3" />
-            <h2 className="text-3xl md:text-4xl font-bold text-navy">
+            <Instagram className="w-8 h-8 text-accent mr-3" />
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
               Follow @chashma_co
             </h2>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Stay updated with our latest collections and styling tips
           </p>
         </div>
@@ -55,15 +55,15 @@ const InstagramFeed = () => {
           {instagramPosts.map((post) => (
             <div
               key={post.id}
-              className="relative group cursor-pointer card-hover rounded-lg overflow-hidden"
+              className="relative group cursor-pointer card-hover rounded-lg overflow-hidden border border-border"
             >
               <img
                 src={post.image}
                 alt={post.caption}
                 className="w-full h-48 object-cover"
               />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <Instagram className="w-8 h-8 text-white" />
+              <div className="absolute inset-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <Instagram className="w-8 h-8 text-foreground" />
               </div>
             </div>
           ))}
@@ -72,7 +72,7 @@ const InstagramFeed = () => {
         <div className="text-center mt-8">
           <a
             href="#"
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-primary to-accent text-primary-foreground px-8 py-3 rounded-lg font-medium hover:from-primary/90 hover:to-accent/90 transition-all duration-300"
           >
             <Instagram className="w-5 h-5" />
             <span>Follow on Instagram</span>
