@@ -12,6 +12,8 @@ import ContactPanel from '@/components/admin/ContactPanel';
 import AnalyticsPanel from '@/components/admin/AnalyticsPanel';
 import { Button } from '@/components/ui/button';
 import { Grid, Table as TableIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import AnimatedPage from '@/components/AnimatedPage';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -66,11 +68,18 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <AnimatedPage className="min-h-screen bg-background">
       <Header />
       <main className="py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-foreground mb-8">Admin Dashboard</h1>
+          <motion.h1 
+            className="text-3xl font-bold text-foreground mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Admin Dashboard
+          </motion.h1>
           
           <Tabs defaultValue="analytics" className="space-y-6">
             <TabsList className="grid w-full grid-cols-5">
@@ -82,7 +91,13 @@ const AdminDashboard = () => {
             </TabsList>
             
             <TabsContent value="analytics">
-              <AnalyticsPanel />
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AnalyticsPanel />
+              </motion.div>
             </TabsContent>
             
             <TabsContent value="products" className="space-y-6">
@@ -125,7 +140,7 @@ const AdminDashboard = () => {
           </Tabs>
         </div>
       </main>
-    </div>
+    </AnimatedPage>
   );
 };
 

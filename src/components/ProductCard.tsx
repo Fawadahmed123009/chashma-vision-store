@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
+import { motion } from 'framer-motion';
 
 interface Product {
   id: string;
@@ -36,21 +37,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
-      <Link to={`/product/${product.id}`}>
-        <div className="aspect-square bg-muted overflow-hidden relative">
-          <img
-            src={product.images[0] || '/placeholder.svg'}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          {!inStock && (
-            <div className="absolute inset-0 bg-destructive/80 flex items-center justify-center">
-              <span className="text-destructive-foreground font-semibold text-lg">Out of Stock</span>
-            </div>
-          )}
-        </div>
-      </Link>
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -8 }}
+    >
+      <Card className="group overflow-hidden hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 bg-card border-border">
+        <Link to={`/product/${product.id}`}>
+          <div className="aspect-square bg-muted overflow-hidden relative">
+            <motion.img
+              src={product.images[0] || '/placeholder.svg'}
+              alt={product.name}
+              className="w-full h-full object-cover"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.4 }}
+            />
+            {!inStock && (
+              <div className="absolute inset-0 bg-destructive/80 flex items-center justify-center">
+                <span className="text-destructive-foreground font-semibold text-lg">Out of Stock</span>
+              </div>
+            )}
+          </div>
+        </Link>
       
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
@@ -102,7 +111,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         <div className="flex space-x-2">
           <Link to={`/product/${product.id}`} className="flex-1">
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full transition-all duration-300 hover:bg-muted/50">
               View Details
             </Button>
           </Link>
@@ -116,6 +125,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   );
 };
 

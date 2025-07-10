@@ -7,10 +7,11 @@ import FeaturedCategories from '../components/FeaturedCategories';
 import PromoSection from '../components/PromoSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 import InstagramFeed from '../components/InstagramFeed';
+import AnimatedPage from '../components/AnimatedPage';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <AnimatedPage className="min-h-screen bg-background">
       <Header />
       <main>
         <HeroSection />
@@ -20,7 +21,7 @@ const Index = () => {
         <InstagramFeed />
       </main>
       <Footer />
-    </div>
+    </AnimatedPage>
   );
 };
 

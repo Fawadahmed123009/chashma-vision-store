@@ -7,6 +7,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import AnimatedPage from '../components/AnimatedPage';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -36,26 +38,47 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <AnimatedPage className="min-h-screen bg-background">
       <Header />
       <main className="py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-foreground mb-8">Shopping Cart</h1>
+          <motion.h1 
+            className="text-3xl font-bold text-foreground mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Shopping Cart
+          </motion.h1>
 
           {cartItems.length === 0 ? (
-            <div className="text-center py-16">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Your cart is empty</h2>
-              <p className="text-gray-600 mb-6">Add some amazing frames to get started!</p>
+            <motion.div 
+              className="text-center py-16"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <h2 className="text-xl font-semibold text-foreground mb-4">Your cart is empty</h2>
+              <p className="text-muted-foreground mb-6">Add some amazing frames to get started!</p>
               <Link to="/shop" className="btn-primary">
                 Continue Shopping
               </Link>
-            </div>
+            </motion.div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="bg-card rounded-lg p-6 shadow-sm border border-border flex items-center space-x-4">
+                <AnimatePresence>
+                  {cartItems.map((item, index) => (
+                    <motion.div 
+                      key={item.id} 
+                      className="bg-card rounded-lg p-6 shadow-sm border border-border flex items-center space-x-4"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      layout
+                    >
                     <img
                       src={item.product.images[0]}
                       alt={item.product.name}
@@ -103,12 +126,18 @@ const Cart = () => {
                         Remove
                       </Button>
                     </div>
-                  </div>
-                ))}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
 
               {/* Order Summary */}
-              <div className="bg-card rounded-lg p-6 shadow-sm border border-border h-fit">
+              <motion.div 
+                className="bg-card rounded-lg p-6 shadow-sm border border-border h-fit"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
                 <h2 className="text-xl font-semibold text-foreground mb-6">Order Summary</h2>
                 
                 <div className="space-y-3 mb-6">
@@ -140,13 +169,13 @@ const Cart = () => {
                     <p>• Expected delivery: 3-5 days</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           )}
         </div>
       </main>
       <Footer />
-    </div>
+    </AnimatedPage>
   );
 };
 
